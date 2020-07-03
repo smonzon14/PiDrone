@@ -58,16 +58,16 @@ def getPositionData():
   return latitude, longitude
 
 
+if __name__ == "__main__":
+  while running:
+    try:
+      getPositionData()
+    except KeyboardInterrupt:
+      running = False
+      gps.close()
+      print("Application closed!")
+    except Exception as e:
 
-while running:
-  try:
-    getPositionData()
-  except KeyboardInterrupt:
-    running = False
-    gps.close()
-    print("Application closed!")
-  except Exception as e:
-
-    # You should do some error handling here...
-    print("Application error! " + str(e))
+      # You should do some error handling here...
+      print("Application error! " + str(e))
 
