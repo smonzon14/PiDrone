@@ -46,7 +46,7 @@ def main():
             try:
                 sock.settimeout(1)
                 data, addr = sock.recvfrom(1024)
-                s = list(struct.unpack('2?4d',data))
+                s = list(struct.unpack('3?4d',data))
                 print("Received: " + str(s))
             except socket.timeout:
                 print("WARNING: No Control Data.")
