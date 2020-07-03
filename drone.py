@@ -4,6 +4,8 @@ import struct
 import pigpio
 import os
 import time
+import py_qmc5883l
+import gps_serial
 
 def minMaxRange(val):
     return max(min(val, 1.0), 0.0)
@@ -36,7 +38,8 @@ def main():
     sensitivity_throttle = 0.01
     sensitivity = 0.01
     deadzone = 0.03
-
+    compass = py_qmc5883l.QMC5883L()
+    compass.mode_standby()
     while 1:
         s = []
         while(s == []):
@@ -54,10 +57,10 @@ def main():
                         for esc in ESC_Array:
                             esc.set_speed(throttle)
 
-
                     else:
                         armed = False
                         throttle = 0
+                        compass.mode_standby()
                         Kill(ESC_Array)
                         print("Killed all motors")
 
@@ -73,22 +76,25 @@ def main():
         if(kill):
             while(throttle > 0):
 
-                throttle -= 0.025 if(throttle <= 0.5) else 0.05
-                time.sleep(0.01)
+                throttle -= 0.2 if(throttle <= 0.5) else 0.1
                 for esc in ESC_Array:
                     esc.set_speed(throttle)
+                time.sleep(1)
             armed = False
             throttle = 0
+            compass.mode_standby()
             Kill(ESC_Array)
             print("Killed all motors")
 
         if(arm and not armed):
+            compass.mode_continuous()
             Arm(ESC_Array)
             armed=True
         elif(calibrate and not armed and not calibrated):
             Calibrate(ESC_Array)
             calibrated = True
         elif(armed):
+            gps_serial.getPositionData()
             if(abs(translate_ud) > deadzone):
                 throttle += translate_ud * sensitivity_throttle
                 throttle = max(min(throttle, 1.0), 0.0)
@@ -168,14 +174,15 @@ class ESC():
         self.start()
 
     def set_pwm(self, pwm):
-        self.pi.set_servo_pulsewidth(pwm)
+        self.pi.set_servo_pulsewidth(self.pin, pwm)
 
     def set_speed(self, speed):
         # speed as a decimal (percentage)
         self.set_pwm(self.min_value + (self.max_value - self.min_value) * speed)
 
-    def stop(self): #This will stop every action your Pi is performing for ESC ofcourse.
+    def stop(self):
         self.set_pwm(0)
+        # for some reason self.pi.stop() creates an error
 
     def start(self):
         self.pi = pigpio.pi()
