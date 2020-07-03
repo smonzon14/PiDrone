@@ -7,7 +7,6 @@ UDP_PORT = 999
 cap = cv2.VideoCapture(0)
 while(True):
   ret, frame = cap.read()
-  cv2.imshow('frame',frame)
   sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
   d = frame.flatten ()
   s = d.tostring ()
