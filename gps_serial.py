@@ -19,17 +19,9 @@ class GPS():
 
   def __update(self, verbose=False):
     while(self.running):
-      try:
-        data = self.gps.readline()
-        data = data.decode("utf-8")
-      except KeyboardInterrupt:
-        self.stop()
-        print("Stopped")
-        return
+      data = self.gps.readline()
+      data = data.decode("utf-8")
 
-      except Exception as e:
-        print("[GPS] Error: " + str(e))
-        return
       message = data[0:6]
 
       if (message == "$GNRMC"):
@@ -53,5 +45,8 @@ class GPS():
 if __name__ == "__main__":
   gps = GPS()
   while True:
-    time.sleep(1)
-
+    try:
+      time.sleep(1)
+    except KeyboardInterrupt:
+      gps.stop()
+      break
