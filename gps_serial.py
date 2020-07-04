@@ -5,17 +5,25 @@ from threading import Thread
 class GPS():
   def __init__(self, serial_port="/dev/serial0"):
     self.serial_port = serial_port
-    self.gps = serial.Serial(serial_port, baudrate = 9600, timeout = 0.5)
+    self.gps = None
     self.running = True
     self.longitude = None
     self.latitude = None
     self.lastLock = None
-    self.updateThread = Thread(target=self.__update, args=(True,))
+    self.running = True
+    self.updateThread = None
+    self.start()
+
+  def start(self):
+    self.gps = serial.Serial(self.serial_port, baudrate = 9600, timeout = 0.5)
+    self.running = True
+    self.updateThread = Thread(target=self.__update)
     self.updateThread.start()
 
   def stop(self):
     self.gps.close()
     self.running = False
+    self.updateThread.join()
 
   def __update(self, verbose=False):
     while(self.running):
