@@ -5,7 +5,7 @@ from threading import Thread
 
 class Compass():
   def __init__(self):
-    self.compass = py_qmc5883l.QMC5883L()
+    self.compass = qmc.QMC5883L()
     self.compass.calibration = [[1.0291846390883186, 0.05995325526887818, 11.637433086701016],
                            [0.05995325526887818, 1.123160434037164, 942.1546833011146],
                            [0.0, 0.0, 1.0]]
