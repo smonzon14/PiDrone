@@ -28,6 +28,9 @@ class GPS():
   def getPosition(self):
     return self.latitude, self.longitude
 
+  def getLastLockTime(self):
+    return self.lastLock
+
   def __update(self, verbose=False):
     while(self.running):
       data = self.gps.readline()
