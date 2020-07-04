@@ -13,9 +13,4 @@ while(True):
   for i in range(20):
     sock.sendto (s[i*46080:(i+1)*46080],(UDP_IP, UDP_PORT))
 
-
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-      break
-
 cap.release()
-cv2.destroyAllWindows()

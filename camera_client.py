@@ -4,20 +4,24 @@ import socket
 import numpy
 import time
 import matplotlib.pyplot as plt
+import array
 
-UDP_IP=''
-UDP_PORT = 999
+UDP_IP='192.168.1.11'
+UDP_PORT = 2001
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind((UDP_IP, UDP_PORT))
 
-s=""
+s=bytearray()
 
 while True:
   data, addr = sock.recvfrom(46080)
-  s+= data
-  if len(s) == (46080*20):
-    frame = numpy.fromstring (s, dtype=numpy.uint8)
+  s.extend(data)
+  print(len(s))
+  if len(s) == (20*46080):
+    frame = numpy.array(s, dtype=int)
     frame = frame.reshape(480,640,3)
-    plt.imshow("frame",frame)
+
+    print(frame)
+    plt.matshow(frame)
     plt.show()
-    s=""
+    s=bytearray()
