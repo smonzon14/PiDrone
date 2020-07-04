@@ -22,6 +22,11 @@ class GPS():
       try:
         data = self.gps.readline()
         data = data.decode("utf-8")
+      except KeyboardInterrupt:
+        self.stop()
+        print("Stopped")
+        return
+
       except Exception as e:
         print("[GPS] Error: " + str(e))
         return
