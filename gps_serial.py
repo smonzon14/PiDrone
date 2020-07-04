@@ -25,6 +25,9 @@ class GPS():
     self.running = False
     self.updateThread.join()
 
+  def getPosition(self):
+    return self.latitude, self.longitude
+
   def __update(self, verbose=False):
     while(self.running):
       data = self.gps.readline()
