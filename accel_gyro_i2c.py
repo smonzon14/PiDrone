@@ -52,18 +52,18 @@ OFFSETS = [0.3, -0.11, -0.22, 0, 0, 0.11]
 
 
 def get_acc_x():
-  return read_raw_data(ACCEL_XOUT_H)/16384.0 + OFFSETS[0]
+  return read_raw_data(ACCEL_XOUT_H)/16384.0 + OFFSETS[3]
 def get_acc_y():
-  return read_raw_data(ACCEL_YOUT_H)/16384.0 + OFFSETS[1]
+  return read_raw_data(ACCEL_YOUT_H)/16384.0 + OFFSETS[4]
 def get_acc_z():
-  return read_raw_data(ACCEL_ZOUT_H)/16384.0 + OFFSETS[2]
+  return read_raw_data(ACCEL_ZOUT_H)/16384.0 + OFFSETS[5]
 
 def get_gyro_x():
-  return read_raw_data(GYRO_XOUT_H)/131.0 + OFFSETS[3]
+  return read_raw_data(GYRO_XOUT_H)/131.0 + OFFSETS[1]
 def get_gyro_y():
-  return read_raw_data(GYRO_YOUT_H)/131.0 + OFFSETS[4]
+  return read_raw_data(GYRO_YOUT_H)/131.0 + OFFSETS[2]
 def get_gyro_z():
-  return read_raw_data(GYRO_ZOUT_H)/131.0 + OFFSETS[5]
+  return read_raw_data(GYRO_ZOUT_H)/131.0 + OFFSETS[3]
 
 bus = smbus.SMBus(1) 	# or bus = smbus.SMBus(0) for older version boards
 Device_Address = 0x68   # MPU6050 device address
