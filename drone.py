@@ -95,13 +95,15 @@ def Kill():
     for ESC in ESC_Array:
         ESC.stop()
 
-def recieveControllerData(timeout=0.6):
+def recieveControllerData(timeout=0.5):
     sock.settimeout(timeout)
     data, addr = sock.recvfrom(1024)
     s = list(struct.unpack('3?4d',data))
     return s
 
 running = True
+
+hover_throttle = 0.5
 
 try:
     while running:
@@ -152,8 +154,17 @@ try:
         elif(armed):
             ESC_Speeds = [0.0, 0.0, 0.0, 0.0]
 
-            throttle = max(0, translate_ud)
-            throttle = max(min(throttle, 1.0), 0.0)
+
+            if(translate_ud > 0):
+                if(throttle > hover_throttle):
+                    throttle = translate_ud
+                else:
+                    throttle += translate_ud * sensitivity_throttle
+            else:
+                if(throttle > hover_throttle):
+                    throttle += translate_ud * sensitivity_throttle
+                else:
+                    throttle = translate_ud + 1
             if(abs(translate_lr) > deadzone):
                 delta = translate_lr * sensitivity
                 ESC_Speeds[0] += delta
