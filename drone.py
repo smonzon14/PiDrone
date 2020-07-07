@@ -42,6 +42,7 @@ def main():
     GPS = gps_serial.GPS()
     COMPASS = compass_i2c.Compass()
 
+    EPOCH = 0
     while 1:
         s = []
         while(s == []):
@@ -97,10 +98,9 @@ def main():
             Calibrate(ESC_Array)
             calibrated = True
         elif(armed):
-            print(GPS.getPosition())
-            print(COMPASS.getHeading())
+
             if(abs(translate_ud) > deadzone):
-                throttle += translate_ud * sensitivity_throttle
+                throttle = translate_ud / 2 + 0.5
                 throttle = max(min(throttle, 1.0), 0.0)
             if(abs(translate_lr) > deadzone):
                 delta = translate_lr * sensitivity
@@ -124,6 +124,13 @@ def main():
             for s in range(4):
                 ESC_Array[s].set_speed(ESC_Speeds[s])
 
+        if(EPOCH % 20 == 0):
+            position = GPS.getPosition()
+            print("Position: Lat=" + position[0] + " Lon:"+ position[1])
+            print("Heading: " + COMPASS.getHeading())
+            print()
+
+        EPOCH+=1
 
 def Calibrate(ESC_Array):   #This is the auto calibration procedure of a normal ESC
     for ESC in ESC_Array:
