@@ -138,6 +138,8 @@ try:
                     else:
                         armed = False
                         throttle = 0
+            except KeyboardInterrupt:
+                running = False
 
 
         kill =          s[0]
