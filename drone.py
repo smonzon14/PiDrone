@@ -36,7 +36,7 @@ def main():
     calibrated = False
     throttle = 0
     sensitivity_throttle = 0.01
-    sensitivity = 0.01
+    sensitivity = 0.1
     deadzone = 0.03
 
     GPS = gps_serial.GPS()
@@ -50,7 +50,7 @@ def main():
                 sock.settimeout(1)
                 data, addr = sock.recvfrom(1024)
                 s = list(struct.unpack('3?4d',data))
-                print("Received: " + str(s))
+                #print("Received: " + str(s))
             except socket.timeout:
                 print("WARNING: No Control Data.")
                 if(armed):
@@ -65,7 +65,6 @@ def main():
                         throttle = 0
                         GPS.stop()
                         COMPASS.stop()
-                        Kill(ESC_Array)
                         print("Killed all motors")
 
 
@@ -73,8 +72,8 @@ def main():
         arm =           s[1]
         calibrate =     s[2]
         translate_lr =  s[3]
-        translate_fb =  s[4]
-        translate_ud =  s[5]
+        translate_ud =  s[4]
+        translate_fb =  s[5]
         yaw =           s[6]
 
         if(kill):
@@ -87,7 +86,6 @@ def main():
             armed = False
             throttle = 0
             COMPASS.stop()
-            Kill(ESC_Array)
             print("Killed all motors")
 
         if(arm and not armed):
@@ -98,10 +96,10 @@ def main():
             Calibrate(ESC_Array)
             calibrated = True
         elif(armed):
-
-            if(abs(translate_ud) > deadzone):
-                throttle = translate_ud / 2 + 0.5
-                throttle = max(min(throttle, 1.0), 0.0)
+            ESC_Speeds = [0.0, 0.0, 0.0, 0.0]
+            throttle = 0
+            throttle = translate_ud / 2 + 0.25
+            throttle = max(min(throttle, 1.0), 0.0)
             if(abs(translate_lr) > deadzone):
                 delta = translate_lr * sensitivity
                 ESC_Speeds[0] += delta
@@ -134,6 +132,7 @@ def main():
 
 def Calibrate(ESC_Array):   #This is the auto calibration procedure of a normal ESC
     for ESC in ESC_Array:
+        ESC.start()
         ESC.set_pwm(0)
     print("Disconnect the battery and press Enter")
     input()
@@ -156,10 +155,9 @@ def Calibrate(ESC_Array):   #This is the auto calibration procedure of a normal 
     time.sleep(1)
 
 def Arm(ESC_Array): #This is the arming procedure of an ESC
+    print("ARMING")
     for ESC in ESC_Array:
         ESC.start()
-    print("Connect the battery and press Enter")
-    input()
     for ESC in ESC_Array:
         ESC.set_pwm(0)
     time.sleep(1)
@@ -181,7 +179,7 @@ class ESC():
 
         self.pin = pin #Connect the ESC in this GPIO pin
         self.max_value = 2000 #change this if your ESC's max value is different or leave it be
-        self.min_value = 700  #change this if your ESC's min value is different or leave it be
+        self.min_value = 1000  #change this if your ESC's min value is different or leave it be
         self.start()
 
     def set_pwm(self, pwm):
