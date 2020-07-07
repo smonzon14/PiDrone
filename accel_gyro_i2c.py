@@ -3,7 +3,6 @@
 	http://www.electronicwings.com
 '''
 import smbus			#import SMBus module of I2C
-import os
 from time import sleep          #import
 
 #some MPU6050 Registers and their Address
@@ -78,6 +77,5 @@ while True:
   Gy = gyro_y/131.0
   Gz = gyro_z/131.0
 
-  os.system("clear")
   print ("Gx=%.2f" %Gx, u'\u00b0'+ "/s", "\tGy=%.2f" %Gy, u'\u00b0'+ "/s", "\tGz=%.2f" %Gz, u'\u00b0'+ "/s", "\tAx=%.2f g" %Ax, "\tAy=%.2f g" %Ay, "\tAz=%.2f g" %Az)
   sleep(0.2)
