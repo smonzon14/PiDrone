@@ -24,7 +24,8 @@ class Compass():
   def stop(self):
     self.compass.mode_standby()
     self.running = False
-    self.updateThread.join()
+    if(self.updateThread != None):
+      self.updateThread.join()
 
   def __update(self):
     while(self.running):

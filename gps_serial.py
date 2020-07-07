@@ -23,7 +23,8 @@ class GPS():
   def stop(self):
     self.gps.close()
     self.running = False
-    self.updateThread.join()
+    if(self.updateThread != None):
+      self.updateThread.join()
 
   def getPosition(self):
     return self.latitude, self.longitude

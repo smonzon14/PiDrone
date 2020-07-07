@@ -4,7 +4,7 @@ import struct
 import pigpio
 import os
 import time
-import py_qmc5883l
+import compass_i2c
 import gps_serial
 
 def minMaxRange(val):
@@ -38,8 +38,10 @@ def main():
     sensitivity_throttle = 0.01
     sensitivity = 0.01
     deadzone = 0.03
-    compass = py_qmc5883l.QMC5883L()
-    compass.mode_standby()
+
+    GPS = gps_serial.GPS()
+    COMPASS = compass_i2c.Compass()
+
     while 1:
         s = []
         while(s == []):
@@ -60,7 +62,8 @@ def main():
                     else:
                         armed = False
                         throttle = 0
-                        compass.mode_standby()
+                        GPS.stop()
+                        COMPASS.stop()
                         Kill(ESC_Array)
                         print("Killed all motors")
 
@@ -82,19 +85,21 @@ def main():
                 time.sleep(1)
             armed = False
             throttle = 0
-            compass.mode_standby()
+            COMPASS.stop()
             Kill(ESC_Array)
             print("Killed all motors")
 
         if(arm and not armed):
-            compass.mode_continuous()
+            COMPASS.start()
+            GPS.start()
             Arm(ESC_Array)
             armed=True
         elif(calibrate and not armed and not calibrated):
             Calibrate(ESC_Array)
             calibrated = True
         elif(armed):
-            gps_serial.getPositionData()
+            print(GPS.getPosition())
+            print(COMPASS.getHeading())
             if(abs(translate_ud) > deadzone):
                 throttle += translate_ud * sensitivity_throttle
                 throttle = max(min(throttle, 1.0), 0.0)
