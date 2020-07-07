@@ -70,42 +70,32 @@ def minMaxRange(val):
     return max(min(val, 1.0), 0.0)
 
 def Calibrate():   #This is the auto calibration procedure of a normal ESC
-    for ESC in ESC_Array:
-        ESC.start()
-        ESC.set_pwm(0)
+
     print("Disconnect the battery and press Enter")
     input()
     for ESC in ESC_Array:
+        ESC.start()
         ESC.set_speed(1)
     print("Connect the battery NOW.. you will here two beeps, then wait for a gradual falling tone then press Enter")
     input()
     for ESC in ESC_Array:
         ESC.set_speed(0)
-    for i in range(12) :
-        time.sleep(1)
-        print(".\r")
-    for ESC in ESC_Array:
-        ESC.set_pwm(0)
-    print("Almost there...")
-    time.sleep(2)
-    for ESC in ESC_Array:
-        ESC.set_speed(0)
+    print("Wait for long beep.")
+    input()
     print("Done.")
-    time.sleep(1)
 
 def Arm(): #This is the arming procedure of an ESC
     print("ARMING")
     for ESC in ESC_Array:
         ESC.start()
     for ESC in ESC_Array:
-        ESC.set_pwm(0)
+        ESC.set_speed(0)
     time.sleep(1)
     for ESC in ESC_Array:
         ESC.set_speed(1)
     time.sleep(1)
     for ESC in ESC_Array:
-        ESC.set_speed(0)
-    time.sleep(1)
+        ESC.set_speed(0.05)
     print("Armed and ready!")
 
 def Kill():
@@ -169,7 +159,7 @@ try:
         elif(armed):
             ESC_Speeds = [0.0, 0.0, 0.0, 0.0]
 
-            throttle = translate_ud / 2 + 0.25
+            throttle = max(0, translate_ud)
             throttle = max(min(throttle, 1.0), 0.0)
             if(abs(translate_lr) > deadzone):
                 delta = translate_lr * sensitivity
