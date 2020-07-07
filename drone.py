@@ -7,172 +7,6 @@ import time
 import compass_i2c
 import gps_serial
 
-def minMaxRange(val):
-    return max(min(val, 1.0), 0.0)
-
-def main():
-    UDP_PORT = 5005
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.bind(('',UDP_PORT))
-    #os.system ("sudo pigpiod")
-    #time.sleep(1)
-    """
-        (cw)              (ccw)
-          12              13
-             \\         //
-               \\_____// 
-                |  ^  |
-                |_____|
-               //     \\
-             //         \\
-          19              16
-       (ccw)               (cw)
-     
-    """
-    ESC_Pins = [12, 13, 16, 19]
-    ESC_Array = [ESC(pin) for pin in ESC_Pins]
-    ESC_Speeds = [0.0, 0.0, 0.0, 0.0]
-    armed = False
-    calibrated = False
-    throttle = 0
-    sensitivity_throttle = 0.01
-    sensitivity = 0.1
-    deadzone = 0.03
-
-    GPS = gps_serial.GPS()
-    COMPASS = compass_i2c.Compass()
-
-    EPOCH = 0
-    while 1:
-        s = []
-        while(s == []):
-            try:
-                sock.settimeout(1)
-                data, addr = sock.recvfrom(1024)
-                s = list(struct.unpack('3?4d',data))
-                #print("Received: " + str(s))
-            except socket.timeout:
-                print("WARNING: No Control Data.")
-                if(armed):
-                    print("Throttling down: "+throttle)
-                    if(throttle > 0):
-                        throttle -= 0.2 if(throttle <= 0.5) else 0.1
-                        for esc in ESC_Array:
-                            esc.set_speed(throttle)
-
-                    else:
-                        armed = False
-                        throttle = 0
-                        GPS.stop()
-                        COMPASS.stop()
-                        print("Killed all motors")
-
-
-        kill =          s[0]
-        arm =           s[1]
-        calibrate =     s[2]
-        translate_lr =  s[3]
-        translate_ud =  s[4]
-        translate_fb =  s[5]
-        yaw =           s[6]
-
-        if(kill):
-            while(throttle > 0):
-
-                throttle -= 0.2 if(throttle <= 0.5) else 0.1
-                for esc in ESC_Array:
-                    esc.set_speed(throttle)
-                time.sleep(1)
-            armed = False
-            throttle = 0
-            COMPASS.stop()
-            print("Killed all motors")
-
-        if(arm and not armed):
-
-            Arm(ESC_Array)
-            armed=True
-        elif(calibrate and not armed and not calibrated):
-            Calibrate(ESC_Array)
-            calibrated = True
-        elif(armed):
-            ESC_Speeds = [0.0, 0.0, 0.0, 0.0]
-            throttle = 0
-            throttle = translate_ud / 2 + 0.25
-            throttle = max(min(throttle, 1.0), 0.0)
-            if(abs(translate_lr) > deadzone):
-                delta = translate_lr * sensitivity
-                ESC_Speeds[0] += delta
-                ESC_Speeds[1] -= delta
-                ESC_Speeds[2] -= delta
-                ESC_Speeds[3] += delta
-            if(abs(translate_fb) > deadzone):
-                delta = translate_fb * sensitivity
-                ESC_Speeds[0] -= delta
-                ESC_Speeds[1] -= delta
-                ESC_Speeds[2] += delta
-                ESC_Speeds[3] += delta
-            if(abs(yaw) > deadzone):
-                delta = yaw * sensitivity
-                ESC_Speeds[0] -= delta
-                ESC_Speeds[1] += delta
-                ESC_Speeds[2] -= delta
-                ESC_Speeds[3] += delta
-            ESC_Speeds = [minMaxRange(throttle + ESC_Speeds[i]) for i in range(4)]
-            for s in range(4):
-                ESC_Array[s].set_speed(ESC_Speeds[s])
-
-        if(EPOCH % 20 == 0):
-            position = GPS.getPosition()
-            print("Position: Lat=" + str(position[0]) + " Lon:"+ str(position[1]))
-            print("Heading: " + str(COMPASS.getHeading()))
-            print(ESC_Speeds)
-
-        EPOCH+=1
-
-def Calibrate(ESC_Array):   #This is the auto calibration procedure of a normal ESC
-    for ESC in ESC_Array:
-        ESC.start()
-        ESC.set_pwm(0)
-    print("Disconnect the battery and press Enter")
-    input()
-    for ESC in ESC_Array:
-        ESC.set_speed(1)
-    print("Connect the battery NOW.. you will here two beeps, then wait for a gradual falling tone then press Enter")
-    input()
-    for ESC in ESC_Array:
-        ESC.set_speed(0)
-    for i in range(12) :
-        time.sleep(1)
-        print(".\r")
-    for ESC in ESC_Array:
-        ESC.set_pwm(0)
-    print("Almost there...")
-    time.sleep(2)
-    for ESC in ESC_Array:
-        ESC.set_speed(0)
-    print("Done.")
-    time.sleep(1)
-
-def Arm(ESC_Array): #This is the arming procedure of an ESC
-    print("ARMING")
-    for ESC in ESC_Array:
-        ESC.start()
-    for ESC in ESC_Array:
-        ESC.set_pwm(0)
-    time.sleep(1)
-    for ESC in ESC_Array:
-        ESC.set_speed(1)
-    time.sleep(1)
-    for ESC in ESC_Array:
-        ESC.set_speed(0)
-    time.sleep(1)
-    print("Armed and ready!")
-
-def Kill(ESC_Array):
-    for ESC in ESC_Array:
-        ESC.stop()
-
 class ESC():
 
     def __init__(self, pin):
@@ -197,8 +31,183 @@ class ESC():
         self.pi = pigpio.pi()
         self.set_pwm(0)
 
-if __name__ == '__main__':
-    main()
+UDP_PORT = 5005
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock.bind(('',UDP_PORT))
+#os.system ("sudo pigpiod")
+#time.sleep(1)
+"""
+    (cw)              (ccw)
+      12              13
+         \\         //
+           \\_____// 
+            |  ^  |
+            |_____|
+           //     \\
+         //         \\
+      19              16
+   (ccw)               (cw)
+ 
+"""
+
+ESC_Pins = [12, 13, 16, 19]
+ESC_Array = [ESC(pin) for pin in ESC_Pins]
+ESC_Speeds = [0.0, 0.0, 0.0, 0.0]
+armed = False
+calibrated = False
+throttle = 0.0
+sensitivity_throttle = 0.01
+sensitivity = 0.1
+deadzone = 0.09
+stalling = False
+stall_speed = 0.5
+GPS = gps_serial.GPS()
+COMPASS = compass_i2c.Compass()
+
+EPOCH = 0
+
+def minMaxRange(val):
+    return max(min(val, 1.0), 0.0)
+
+def Calibrate():   #This is the auto calibration procedure of a normal ESC
+    for ESC in ESC_Array:
+        ESC.start()
+        ESC.set_pwm(0)
+    print("Disconnect the battery and press Enter")
+    input()
+    for ESC in ESC_Array:
+        ESC.set_speed(1)
+    print("Connect the battery NOW.. you will here two beeps, then wait for a gradual falling tone then press Enter")
+    input()
+    for ESC in ESC_Array:
+        ESC.set_speed(0)
+    for i in range(12) :
+        time.sleep(1)
+        print(".\r")
+    for ESC in ESC_Array:
+        ESC.set_pwm(0)
+    print("Almost there...")
+    time.sleep(2)
+    for ESC in ESC_Array:
+        ESC.set_speed(0)
+    print("Done.")
+    time.sleep(1)
+
+def Arm(): #This is the arming procedure of an ESC
+    print("ARMING")
+    for ESC in ESC_Array:
+        ESC.start()
+    for ESC in ESC_Array:
+        ESC.set_pwm(0)
+    time.sleep(1)
+    for ESC in ESC_Array:
+        ESC.set_speed(1)
+    time.sleep(1)
+    for ESC in ESC_Array:
+        ESC.set_speed(0)
+    time.sleep(1)
+    print("Armed and ready!")
+
+def Kill():
+    for ESC in ESC_Array:
+        ESC.stop()
+
+def recieveControllerData(timeout=0.6):
+    sock.settimeout(timeout)
+    data, addr = sock.recvfrom(1024)
+    s = list(struct.unpack('3?4d',data))
+    return s
+
+running = True
+
+try:
+    while running:
+        s = []
+        while(s == []):
+            try:
+                s = recieveControllerData()
+            except socket.timeout:
+                print("WARNING: No Control Data.")
+                if(armed):
+                    print("Throttling down: "+throttle)
+                    if(throttle > 0):
+                        throttle -= 0.2 if(throttle <= 0.5) else 0.1
+                        for esc in ESC_Array:
+                            esc.set_speed(throttle)
+
+                    else:
+                        armed = False
+                        throttle = 0
+
+
+        kill =          s[0]
+        arm =           s[1]
+        calibrate =     s[2]
+        translate_lr =  s[3]
+        translate_ud =  s[4]
+        translate_fb =  s[5]
+        yaw =           s[6]
+
+        if(kill):
+            while(throttle > 0):
+                throttle -= 0.2 if(throttle <= 0.5) else 0.1
+                for esc in ESC_Array:
+                    esc.set_speed(throttle)
+                time.sleep(1)
+            armed = False
+            throttle = 0
+
+        if(arm and not armed):
+
+            Arm()
+            armed=True
+        elif(calibrate and not armed and not calibrated):
+            Calibrate()
+            calibrated = True
+        elif(armed):
+            ESC_Speeds = [0.0, 0.0, 0.0, 0.0]
+
+            throttle = translate_ud / 2 + 0.25
+            throttle = max(min(throttle, 1.0), 0.0)
+            if(abs(translate_lr) > deadzone):
+                delta = translate_lr * sensitivity
+                ESC_Speeds[0] += delta
+                ESC_Speeds[1] -= delta
+                ESC_Speeds[2] -= delta
+                ESC_Speeds[3] += delta
+            if(abs(translate_fb) > deadzone):
+                delta = translate_fb * sensitivity
+                ESC_Speeds[0] -= delta
+                ESC_Speeds[1] -= delta
+                ESC_Speeds[2] += delta
+                ESC_Speeds[3] += delta
+            if(abs(yaw) > deadzone):
+                delta = yaw * sensitivity
+                ESC_Speeds[0] -= delta
+                ESC_Speeds[1] += delta
+                ESC_Speeds[2] -= delta
+                ESC_Speeds[3] += delta
+            ESC_Speeds = [minMaxRange(throttle + ESC_Speeds[i]) for i in range(4)]
+            for s in range(4):
+                ESC_Array[s].set_speed(ESC_Speeds[s])
+
+        if(EPOCH % 10 == 0):
+            position = GPS.getPosition()
+            os.system("clear")
+
+            print("Position: Lat=" + str(position[0]) + " Lon:"+ str(position[1]))
+            print("Heading: " + str(COMPASS.getHeading()))
+            print("Speeds:")
+            print(ESC_Speeds)
+
+        EPOCH+=1
+except Exception as e:
+    print(str(e))
+    Kill()
+    GPS.stop()
+    COMPASS.stop()
+
+
 
 
 
