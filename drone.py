@@ -126,9 +126,9 @@ def main():
 
         if(EPOCH % 20 == 0):
             position = GPS.getPosition()
-            print("Position: Lat=" + position[0] + " Lon:"+ position[1])
-            print("Heading: " + COMPASS.getHeading())
-            print()
+            print("Position: Lat=" + str(position[0]) + " Lon:"+ str(position[1]))
+            print("Heading: " + str(COMPASS.getHeading()))
+            print(ESC_Speeds)
 
         EPOCH+=1
 
