@@ -108,19 +108,19 @@ def main():
                 ESC_Speeds[0] += delta
                 ESC_Speeds[1] -= delta
                 ESC_Speeds[2] -= delta
-                ESC_Speeds[4] += delta
+                ESC_Speeds[3] += delta
             if(abs(translate_fb) > deadzone):
                 delta = translate_fb * sensitivity
                 ESC_Speeds[0] -= delta
                 ESC_Speeds[1] -= delta
                 ESC_Speeds[2] += delta
-                ESC_Speeds[4] += delta
+                ESC_Speeds[3] += delta
             if(abs(yaw) > deadzone):
                 delta = yaw * sensitivity
                 ESC_Speeds[0] -= delta
                 ESC_Speeds[1] += delta
                 ESC_Speeds[2] -= delta
-                ESC_Speeds[4] += delta
+                ESC_Speeds[3] += delta
             ESC_Speeds = [minMaxRange(throttle + ESC_Speeds[i]) for i in range(4)]
             for s in range(4):
                 ESC_Array[s].set_speed(ESC_Speeds[s])
