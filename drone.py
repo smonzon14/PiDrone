@@ -90,8 +90,7 @@ def main():
             print("Killed all motors")
 
         if(arm and not armed):
-            COMPASS.start()
-            GPS.start()
+
             Arm(ESC_Array)
             armed=True
         elif(calibrate and not armed and not calibrated):
