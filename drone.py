@@ -165,6 +165,7 @@ try:
                     throttle += translate_ud * sensitivity_throttle
                 else:
                     throttle = translate_ud + 1
+            throttle = minMaxRange(throttle)
             if(abs(translate_lr) > deadzone):
                 delta = translate_lr * sensitivity
                 ESC_Speeds[0] += delta
