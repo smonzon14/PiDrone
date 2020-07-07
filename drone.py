@@ -61,8 +61,8 @@ sensitivity = 0.1
 deadzone = 0.09
 stalling = False
 stall_speed = 0.5
-GPS = gps_serial.GPS()
-COMPASS = compass_i2c.Compass()
+#GPS = gps_serial.GPS()
+#COMPASS = compass_i2c.Compass()
 
 EPOCH = 0
 
@@ -194,11 +194,11 @@ try:
                 ESC_Array[s].set_speed(ESC_Speeds[s])
 
         if(EPOCH % 10 == 0):
-            position = GPS.getPosition()
+            #position = GPS.getPosition()
             os.system("clear")
 
-            print("Position: Lat=" + str(position[0]) + " Lon:"+ str(position[1]))
-            print("Heading: " + str(COMPASS.getHeading()))
+            #print("Position: Lat=" + str(position[0]) + " Lon:"+ str(position[1]))
+            #print("Heading: " + str(COMPASS.getHeading()))
             print("Speeds:")
             print(ESC_Speeds)
 
@@ -206,8 +206,8 @@ try:
 except Exception as e:
     print(str(e))
     Kill()
-    GPS.stop()
-    COMPASS.stop()
+    #GPS.stop()
+    #COMPASS.stop()
 
 
 
