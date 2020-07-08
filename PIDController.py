@@ -2,6 +2,7 @@ import time
 from collections import deque
 import accel_gyro_i2c
 import sys
+import os
 
 class PID():
   def __init__(self,p,i,d):
@@ -32,6 +33,8 @@ if __name__ == "__main__":
 
   pid.setTarget(0)
   while(1):
-    delta = pid.getDelta(accel_gyro_i2c.get_acc_y())
-    print(delta)
+    gyro = accel_gyro_i2c.get_acc_y()
+    delta = pid.getDelta(gyro)
+    text = ": "+ '\033[94m' + "▉" * round(abs(delta) * 10, 0)
+    print("gyro: " + str(round(gyro,2)) +", delta: " + str(round(delta,2)) + text)
     time.sleep(0.1)
