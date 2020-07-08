@@ -167,23 +167,21 @@ try:
                     throttle += translate_ud * sensitivity_throttle
                 throttle = minMaxRange(throttle)
 
-            if(abs(translate_lr) > deadzone):
-                PID_LR.setTarget(translate_lr/3)
-                delta = max(min(PID_LR.getDelta(accel_gyro_i2c.get_gyro_y()) * sensitivity, MAX_MOTOR_DIFF),-1 * MAX_MOTOR_DIFF)
+            PID_LR.setTarget(translate_lr/3 if abs(translate_lr) > deadzone else 0)
+            delta = max(min(PID_LR.getDelta(accel_gyro_i2c.get_gyro_y()) * sensitivity, MAX_MOTOR_DIFF),-1 * MAX_MOTOR_DIFF)
 
-                ESC_Speeds[0] += delta
-                ESC_Speeds[1] -= delta
-                ESC_Speeds[2] -= delta
-                ESC_Speeds[3] += delta
-            if(abs(translate_fb) > deadzone):
-                PID_FB.setTarget(translate_fb/3)
-                delta = max(min(PID_FB.getDelta(accel_gyro_i2c.get_gyro_x()) * sensitivity, MAX_MOTOR_DIFF),-1 * MAX_MOTOR_DIFF)
+            ESC_Speeds[0] += delta
+            ESC_Speeds[1] -= delta
+            ESC_Speeds[2] -= delta
+            ESC_Speeds[3] += delta
+            PID_FB.setTarget(translate_fb/3 if abs(translate_fb) > deadzone else 0)
+            delta = max(min(PID_FB.getDelta(accel_gyro_i2c.get_gyro_x()) * sensitivity, MAX_MOTOR_DIFF),-1 * MAX_MOTOR_DIFF)
 
-                ESC_Speeds[0] -= delta
-                ESC_Speeds[1] -= delta
-                ESC_Speeds[2] += delta
-                ESC_Speeds[3] += delta
-            if(abs(yaw) > deadzone):
+            ESC_Speeds[0] -= delta
+            ESC_Speeds[1] -= delta
+            ESC_Speeds[2] += delta
+            ESC_Speeds[3] += delta
+            if abs(yaw) > deadzone:
                 delta = yaw * sensitivity /10
                 ESC_Speeds[0] -= delta
                 ESC_Speeds[1] += delta
