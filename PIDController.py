@@ -28,7 +28,7 @@ if __name__ == "__main__":
   pid = PID(1,0.1,0.1)
   if(len(sys.argv) == 4):
     print("Using arguments as variables P, I, D")
-    pid = PID(*sys.argv[1:4])
+    pid = PID(float(sys.argv[1]), float(sys.argv[2]), float(sys.argv[3]))
 
   pid.setTarget(0)
   while(1):
