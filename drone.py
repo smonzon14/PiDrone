@@ -163,8 +163,8 @@ try:
             else:
                 if(throttle > hover_throttle):
                     throttle += translate_ud * sensitivity_throttle
-                else:
-                    throttle = translate_ud + 1
+                elif(throttle > (translate_ud + 1)):
+                    throttle = translate_ud
             throttle = minMaxRange(throttle)
             if(abs(translate_lr) > deadzone):
                 delta = translate_lr * sensitivity
