@@ -56,8 +56,8 @@ ESC_Speeds = [0.0, 0.0, 0.0, 0.0]
 armed = False
 calibrated = False
 throttle = 0.0
-sensitivity_throttle = 0.08
-sensitivity = 0.1
+sensitivity_throttle = 0.01
+sensitivity = 0.05
 deadzone = 0.09
 stalling = False
 stall_speed = 0.5
@@ -104,8 +104,6 @@ def recieveControllerData(timeout=0.5):
 running = True
 
 hover_throttle = 0.5
-taking_off = False
-
 try:
     while running:
         s = []
@@ -158,10 +156,11 @@ try:
 
             if(abs(translate_ud) > deadzone):
                 if(translate_ud > 0):
-                    if(throttle < 0):
+                    if(throttle < hover_throttle):
                         throttle += translate_ud * sensitivity_throttle
-                    else:
-                        throttle = translate_ud
+                    if(throttle > hover_throttle):
+                        throttle = translate_ud/2 + hover_throttle
+
                 else:
                     throttle += translate_ud * sensitivity_throttle
                 throttle = minMaxRange(throttle)
