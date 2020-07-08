@@ -65,15 +65,7 @@ def get_gyro_y():
 def get_gyro_z():
   return read_raw_data(GYRO_ZOUT_H)/131.0 + OFFSETS[2]
 
-bus = smbus.SMBus(1) 	# or bus = smbus.SMBus(0) for older version boards
-Device_Address = 0x68   # MPU6050 device address
-
-MPU_Init()
-
-print (" Reading Data of Gyroscope and Accelerometer")
-
-while True:
-
+def get_all():
   Ax = get_acc_x()
   Ay = get_acc_y()
   Az = get_acc_z()
@@ -81,6 +73,26 @@ while True:
   Gx = get_gyro_x()
   Gy = get_gyro_y()
   Gz = get_gyro_z()
+  return Ax,Ay,Az,Gx,Gy,Gz
 
-  print ("Gx=%.2f" %Gx, u'\u00b0'+ "/s", "\tGy=%.2f" %Gy, u'\u00b0'+ "/s", "\tGz=%.2f" %Gz, u'\u00b0'+ "/s", "\tAx=%.2f g" %Ax, "\tAy=%.2f g" %Ay, "\tAz=%.2f g" %Az)
-  sleep(0.2)
+bus = smbus.SMBus(1) 	# or bus = smbus.SMBus(0) for older version boards
+Device_Address = 0x68   # MPU6050 device address
+
+MPU_Init()
+
+
+
+if __name__ == "__main__":
+  print (" Reading Data of Gyroscope and Accelerometer")
+  while True:
+
+    Ax = get_acc_x()
+    Ay = get_acc_y()
+    Az = get_acc_z()
+
+    Gx = get_gyro_x()
+    Gy = get_gyro_y()
+    Gz = get_gyro_z()
+
+    print ("Gx=%.2f" %Gx, u'\u00b0'+ "/s", "\tGy=%.2f" %Gy, u'\u00b0'+ "/s", "\tGz=%.2f" %Gz, u'\u00b0'+ "/s", "\tAx=%.2f g" %Ax, "\tAy=%.2f g" %Ay, "\tAz=%.2f g" %Az)
+    sleep(0.2)

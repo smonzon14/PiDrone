@@ -1,0 +1,28 @@
+import time
+from collections import deque
+import accel_gyro_i2c
+class PID():
+  def __init__(self,p,i,d):
+    self.P = p
+    self.I = i
+    self.D = d
+    self.target = None
+    self.errors = deque([0]*20)
+    self.lastDelta = time.time()
+  def setTarget(self, target):
+    self.errors = deque([0]*20)
+    self.target = target
+  def getDelta(self, current):
+    error = self.target - current
+    t = time.time()
+    u = self.P * error + self.I * sum(self.errors) + self.D * (error - self.errors[0])/(t - self.lastDelta)
+    self.errors.rotate(1)
+    self.errors[0] = error
+    self.lastDelta = t
+    return u
+
+if __name__ == "__main__":
+  pid = PID(1,0.1,0.1)
+  pid.setTarget(20)
+  while(1):
+    print(accel_gyro_i2c.get_all())

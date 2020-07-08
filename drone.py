@@ -37,16 +37,17 @@ sock.bind(('',UDP_PORT))
 #os.system ("sudo pigpiod")
 #time.sleep(1)
 """
-    (cw)              (ccw)
-      12              13
-         \\         //
+
+    (cw)               (ccw)
+      12       ^      13
+         \\    |x   //
            \\_____// 
-            |  ^  |
-            |_____|
+            |  ^  | _y_>
+            |_(z)_|
            //     \\
          //         \\
       19              16
-   (ccw)               (cw)
+   (ccw)                (cw)
  
 """
 
@@ -57,7 +58,7 @@ armed = False
 calibrated = False
 throttle = 0.0
 sensitivity_throttle = 0.05
-sensitivity = 0.05
+sensitivity = 0.1
 deadzone = 0.09
 stalling = False
 stall_speed = 0.5
