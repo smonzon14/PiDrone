@@ -60,7 +60,7 @@ armed = False
 calibrated = False
 throttle = 0.0
 sensitivity_throttle = 0.08
-sensitivity = 0.1
+sensitivity = 1
 deadzone = 0.09
 stalling = False
 stall_speed = 0.5
@@ -168,7 +168,7 @@ try:
                 throttle = minMaxRange(throttle)
 
             if(abs(translate_lr) > deadzone):
-                PID_LR.setTarget(translate_lr/4) #18 deg of freedom
+                PID_LR.setTarget(translate_lr/3)
                 delta = max(min(PID_LR.getDelta(accel_gyro_i2c.get_gyro_y()) * sensitivity, MAX_MOTOR_DIFF),-1 * MAX_MOTOR_DIFF)
 
                 ESC_Speeds[0] += delta
@@ -176,7 +176,7 @@ try:
                 ESC_Speeds[2] -= delta
                 ESC_Speeds[3] += delta
             if(abs(translate_fb) > deadzone):
-                PID_FB.setTarget(translate_fb/4) #18 deg of freedom
+                PID_FB.setTarget(translate_fb/3)
                 delta = max(min(PID_FB.getDelta(accel_gyro_i2c.get_gyro_x()) * sensitivity, MAX_MOTOR_DIFF),-1 * MAX_MOTOR_DIFF)
 
                 ESC_Speeds[0] -= delta
@@ -184,7 +184,7 @@ try:
                 ESC_Speeds[2] += delta
                 ESC_Speeds[3] += delta
             if(abs(yaw) > deadzone):
-                delta = yaw * sensitivity
+                delta = yaw * sensitivity /10
                 ESC_Speeds[0] -= delta
                 ESC_Speeds[1] += delta
                 ESC_Speeds[2] -= delta
