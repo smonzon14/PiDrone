@@ -1,6 +1,8 @@
 import time
 from collections import deque
 import accel_gyro_i2c
+import sys
+
 class PID():
   def __init__(self,p,i,d):
     self.P = p
@@ -22,7 +24,11 @@ class PID():
     return u
 
 if __name__ == "__main__":
+
   pid = PID(1,0.1,0.1)
+  if(len(sys.argv) == 3):
+    pid = PID(*sys.argv)
+
   pid.setTarget(0)
   while(1):
     delta = pid.getDelta(accel_gyro_i2c.get_acc_y())
