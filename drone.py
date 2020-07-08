@@ -26,6 +26,7 @@ class ESC():
         self.set_pwm(self.min_value + (self.max_value - self.min_value) * speed)
 
     def stop(self):
+        self.set_speed(0)
         self.set_pwm(0)
         # for some reason self.pi.stop() creates an error
 
@@ -60,13 +61,13 @@ armed = False
 calibrated = False
 throttle = 0.0
 sensitivity_throttle = 0.08
-sensitivity = 1
+sensitivity = 0.1
 deadzone = 0.09
 stalling = False
 stall_speed = 0.5
 #GPS = gps_serial.GPS()
 #COMPASS = compass_i2c.Compass()
-MAX_MOTOR_DIFF = 0.25
+MAX_MOTOR_DIFF = 0.1
 EPOCH = 0
 
 def minMaxRange(val):
