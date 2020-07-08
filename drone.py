@@ -155,14 +155,8 @@ try:
 
 
             if(abs(translate_ud) > deadzone):
-                if(translate_ud > 0):
-                    if(throttle < hover_throttle):
-                        throttle += translate_ud * sensitivity_throttle
-                    if(throttle > hover_throttle):
-                        throttle = translate_ud/2 + hover_throttle
 
-                else:
-                    throttle += translate_ud * sensitivity_throttle
+                throttle += translate_ud * sensitivity_throttle
                 throttle = minMaxRange(throttle)
 
             if(abs(translate_lr) > deadzone):
