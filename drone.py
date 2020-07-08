@@ -66,7 +66,7 @@ stalling = False
 stall_speed = 0.5
 #GPS = gps_serial.GPS()
 #COMPASS = compass_i2c.Compass()
-
+MAX_MOTOR_DIFF = 0.25
 EPOCH = 0
 
 def minMaxRange(val):
@@ -168,15 +168,17 @@ try:
                 throttle = minMaxRange(throttle)
 
             if(abs(translate_lr) > deadzone):
-                PID_LR.setTarget(translate_lr)
-                delta = PID_LR.getDelta(accel_gyro_i2c.get_gyro_y()) * sensitivity
+                PID_LR.setTarget(translate_lr/4) #18 deg of freedom
+                delta = max(min(PID_LR.getDelta(accel_gyro_i2c.get_gyro_y()) * sensitivity, MAX_MOTOR_DIFF),-1 * MAX_MOTOR_DIFF)
 
                 ESC_Speeds[0] += delta
                 ESC_Speeds[1] -= delta
                 ESC_Speeds[2] -= delta
                 ESC_Speeds[3] += delta
             if(abs(translate_fb) > deadzone):
-                delta = translate_fb * sensitivity
+                PID_FB.setTarget(translate_fb/4) #18 deg of freedom
+                delta = max(min(PID_FB.getDelta(accel_gyro_i2c.get_gyro_x()) * sensitivity, MAX_MOTOR_DIFF),-1 * MAX_MOTOR_DIFF)
+
                 ESC_Speeds[0] -= delta
                 ESC_Speeds[1] -= delta
                 ESC_Speeds[2] += delta

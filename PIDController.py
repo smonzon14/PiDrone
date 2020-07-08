@@ -16,7 +16,6 @@ class PID():
     self.lastDelta = None
   def setTarget(self, target):
     self.target = target
-    self.lastDelta = None
   def getDelta(self, current):
     error = self.target - current
     t = time.time()
