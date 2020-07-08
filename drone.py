@@ -56,7 +56,7 @@ ESC_Speeds = [0.0, 0.0, 0.0, 0.0]
 armed = False
 calibrated = False
 throttle = 0.0
-sensitivity_throttle = 0.01
+sensitivity_throttle = 0.08
 sensitivity = 0.1
 deadzone = 0.09
 stalling = False
@@ -155,16 +155,8 @@ try:
             ESC_Speeds = [0.0, 0.0, 0.0, 0.0]
 
 
-            if(translate_ud > 0):
-                if(throttle > hover_throttle):
-                    throttle = translate_ud
-                else:
-                    throttle += translate_ud * sensitivity_throttle
-            else:
-                if(throttle > hover_throttle):
-                    throttle += translate_ud * sensitivity_throttle
-                elif(throttle > (translate_ud + 1)):
-                    throttle = translate_ud
+
+            throttle += translate_ud * sensitivity_throttle
             throttle = minMaxRange(throttle)
             if(abs(translate_lr) > deadzone):
                 delta = translate_lr * sensitivity
