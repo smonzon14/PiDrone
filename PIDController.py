@@ -9,32 +9,37 @@ class PID():
     self.P = p
     self.I = i
     self.D = d
+    self.Cp = 0.0
+    self.Ci = 0.0
+    self.Cd = 0.0
     self.target = None
-    self.errors = deque([0]*20)
     self.lastDelta = time.time()
   def setTarget(self, target):
-    self.errors = deque([0]*20)
     self.target = target
   def getDelta(self, current):
     error = self.target - current
     t = time.time()
-    u = self.P * error + self.I * sum(self.errors) + self.D * (error - self.errors[0])/(t - self.lastDelta)
-    self.errors.rotate(1)
-    self.errors[0] = error
+    dt = (t - self.lastDelta)
+
+    self.Cd = (error - self.Cp) / dt
+    self.Cp = error
+    self.Ci += error * dt
+
+    u = self.P * self.Cp + self.I * self.Ci + self.D * self.Cd
+
     self.lastDelta = t
     return u
 
 if __name__ == "__main__":
 
-  pid = PID(1,0.1,0.1)
+  pidLR = PID(0.5,1,0.1)
   if(len(sys.argv) == 4):
     print("Using arguments as variables P, I, D")
     pid = PID(float(sys.argv[1]), float(sys.argv[2]), float(sys.argv[3]))
-
-  pid.setTarget(0)
+  pidLR.setTarget(0)
   while(1):
     gyro = accel_gyro_i2c.get_acc_y()
-    delta = pid.getDelta(gyro)
+    delta = pidLR.getDelta(gyro)
     text = ": "+ '\033[94m' + '▉' * int(abs(delta) * 10)
     print("gyro: " + str(round(gyro,2)) +", delta: " + str(round(delta,2)) + text)
     time.sleep(0.1)
