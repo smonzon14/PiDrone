@@ -104,6 +104,7 @@ def recieveControllerData(timeout=0.5):
 running = True
 
 hover_throttle = 0.5
+taking_off = False
 
 try:
     while running:
@@ -155,9 +156,16 @@ try:
             ESC_Speeds = [0.0, 0.0, 0.0, 0.0]
 
 
+            if(abs(translate_ud) > deadzone):
+                if(translate_ud > 0):
+                    if(throttle < 0):
+                        throttle += translate_ud * sensitivity_throttle
+                    else:
+                        throttle = translate_ud
+                else:
+                    throttle += translate_ud * sensitivity_throttle
+                throttle = minMaxRange(throttle)
 
-            throttle += translate_ud * sensitivity_throttle
-            throttle = minMaxRange(throttle)
             if(abs(translate_lr) > deadzone):
                 delta = translate_lr * sensitivity
                 ESC_Speeds[0] += delta
