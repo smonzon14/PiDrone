@@ -56,7 +56,7 @@ ESC_Speeds = [0.0, 0.0, 0.0, 0.0]
 armed = False
 calibrated = False
 throttle = 0.0
-sensitivity_throttle = 0.1
+sensitivity_throttle = 0.05
 sensitivity = 0.05
 deadzone = 0.09
 stalling = False
@@ -155,8 +155,11 @@ try:
 
 
             if(abs(translate_ud) > deadzone):
-
-                throttle += translate_ud * sensitivity_throttle
+                if(translate_ud > 0):
+                    if(translate_ud > throttle):
+                        throttle = translate_ud
+                else:
+                    throttle += translate_ud * sensitivity_throttle
                 throttle = minMaxRange(throttle)
 
             if(abs(translate_lr) > deadzone):
