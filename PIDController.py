@@ -23,6 +23,8 @@ class PID():
 
 if __name__ == "__main__":
   pid = PID(1,0.1,0.1)
-  pid.setTarget(20)
+  pid.setTarget(0)
   while(1):
-    print(accel_gyro_i2c.get_all())
+    delta = pid.getDelta(accel_gyro_i2c.get_acc_y())
+    print(delta)
+    time.sleep(0.01)
