@@ -6,6 +6,8 @@ import os
 import time
 import compass_i2c
 import gps_serial
+from PIDController import PID
+import accel_gyro_i2c
 
 class ESC():
 
@@ -57,7 +59,7 @@ ESC_Speeds = [0.0, 0.0, 0.0, 0.0]
 armed = False
 calibrated = False
 throttle = 0.0
-sensitivity_throttle = 0.05
+sensitivity_throttle = 0.08
 sensitivity = 0.1
 deadzone = 0.09
 stalling = False
@@ -105,6 +107,10 @@ def recieveControllerData(timeout=0.5):
 running = True
 
 hover_throttle = 0.5
+
+PID_LR = PID(0.5,1,0.1)
+PID_FB = PID(0.5,1,0.1)
+
 try:
     while running:
         s = []
@@ -153,8 +159,6 @@ try:
             calibrated = True
         elif(armed):
             ESC_Speeds = [0.0, 0.0, 0.0, 0.0]
-
-
             if(abs(translate_ud) > deadzone):
                 if(translate_ud > 0):
                     if(translate_ud > throttle):
@@ -164,7 +168,9 @@ try:
                 throttle = minMaxRange(throttle)
 
             if(abs(translate_lr) > deadzone):
-                delta = translate_lr * sensitivity
+                PID_LR.setTarget(translate_lr)
+                delta = PID_LR.getDelta(accel_gyro_i2c.get_gyro_y()) * sensitivity
+
                 ESC_Speeds[0] += delta
                 ESC_Speeds[1] -= delta
                 ESC_Speeds[2] -= delta

@@ -13,21 +13,27 @@ class PID():
     self.Ci = 0.0
     self.Cd = 0.0
     self.target = None
-    self.lastDelta = time.time()
+    self.lastDelta = None
   def setTarget(self, target):
     self.target = target
+    self.lastDelta = None
   def getDelta(self, current):
     error = self.target - current
     t = time.time()
-    dt = (t - self.lastDelta)
-
-    self.Cd = (error - self.Cp) / dt
-    self.Cp = error
-    self.Ci += error * dt
-
-    u = self.P * self.Cp + self.I * self.Ci + self.D * self.Cd
+    if(self.lastDelta == None):
+      self.Cp = error
+      self.Ci = 0.0
+      self.Cd = 0.0
+    else:
+      dt = (t - self.lastDelta)
+      self.Cd = (error - self.Cp) / dt
+      self.Cp = error
+      self.Ci += error * dt
 
     self.lastDelta = t
+    u = self.P * self.Cp + self.I * self.Ci + self.D * self.Cd
+
+
     return u
 
 if __name__ == "__main__":
@@ -42,4 +48,6 @@ if __name__ == "__main__":
     delta = pidLR.getDelta(gyro)
     text = ": "+ '\033[94m' + '▉' * int(abs(delta) * 10)
     print("gyro: " + str(round(gyro,2)) +", delta: " + str(round(delta,2)) + text)
-    time.sleep(0.1)
+
+    time.sleep(0.01)
+
