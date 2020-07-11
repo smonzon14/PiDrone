@@ -45,7 +45,7 @@ if __name__ == "__main__":
   while(1):
     gyro = accel_gyro_i2c.get_pitch()
     delta = pidLR.getDelta(round(gyro,2))
-    text = ": "+ '\033[94m' + '▉' * int(abs(delta) * 10)
+    text = ": "+ '\033[94m' + '=' * int(abs(delta) * 10)
     print("gyro: " + str(round(gyro,2)) +", delta: " + str(round(delta,2)) + text)
 
     time.sleep(0.01)
