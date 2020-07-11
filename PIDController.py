@@ -40,7 +40,7 @@ if __name__ == "__main__":
   pidLR = PID(0.5,1,0.1)
   if(len(sys.argv) == 4):
     print("Using arguments as variables P, I, D")
-    pid = PID(float(sys.argv[1]), float(sys.argv[2]), float(sys.argv[3]))
+    pidLR = PID(float(sys.argv[1]), float(sys.argv[2]), float(sys.argv[3]))
   pidLR.setTarget(0)
   while(1):
     gyro = accel_gyro_i2c.get_pitch()

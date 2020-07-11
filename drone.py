@@ -142,11 +142,9 @@ try:
         translate_ud =  s[4]
         translate_fb =  s[5]
         yaw =           s[6]
-        acc = [accel_gyro_i2c.get_acc_x(),
-               accel_gyro_i2c.get_acc_y(),
-               accel_gyro_i2c.get_acc_z()]
-        pitch = round(180 * math.atan2(acc[0], math.sqrt(acc[1]**2 + acc[2]**2))/math.pi, 2)
-        roll = -1 * round(180 * math.atan2(acc[1], math.sqrt(acc[0]**2 + acc[2]**2))/math.pi, 2)
+
+        pitch = accel_gyro_i2c.get_pitch()
+        roll = accel_gyro_i2c.get_roll()
 
         if(kill):
             while(throttle > 0):
