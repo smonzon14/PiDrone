@@ -8,6 +8,7 @@ import compass_i2c
 import gps_serial
 from PIDController import PID
 import accel_gyro_i2c
+import math
 
 class ESC():
 
@@ -109,8 +110,8 @@ running = True
 
 hover_throttle = 0.5
 
-PID_LR = PID(0.1,0.1,0.1)
-PID_FB = PID(0.1,0.1,0.1)
+PID_LR = PID(1,1,1)
+PID_FB = PID(1,1,1)
 
 try:
     while running:
@@ -141,6 +142,11 @@ try:
         translate_ud =  s[4]
         translate_fb =  s[5]
         yaw =           s[6]
+        acc = [accel_gyro_i2c.get_acc_x(),
+               accel_gyro_i2c.get_acc_y(),
+               accel_gyro_i2c.get_acc_z()]
+        roll = 180 * math.atan2(acc[0], math.sqrt(acc[1]**2 + acc[2]**2))/math.pi
+        pitch = 180 * math.atan2(acc[1], math.sqrt(acc[0]**2 + acc[2]**2))/math.pi
 
         if(kill):
             while(throttle > 0):
@@ -170,15 +176,15 @@ try:
                 throttle = minMaxRange(throttle)
 
             PID_LR.setTarget(translate_lr/3 if abs(translate_lr) > deadzone else 0)
-            delta = max(min(PID_LR.getDelta(round(accel_gyro_i2c.get_gyro_y(),2)) * sensitivity, MAX_MOTOR_DIFF),-1 * MAX_MOTOR_DIFF)
-            print(delta)
+            delta = max(min(PID_LR.getDelta(roll) * sensitivity, MAX_MOTOR_DIFF), -1 * MAX_MOTOR_DIFF)
+
             ESC_Speeds[0] += delta
             ESC_Speeds[1] -= delta
             ESC_Speeds[2] -= delta
             ESC_Speeds[3] += delta
             PID_FB.setTarget(translate_fb/3 if abs(translate_fb) > deadzone else 0)
-            delta = max(min(PID_FB.getDelta(round(accel_gyro_i2c.get_gyro_x(),2)) * sensitivity, MAX_MOTOR_DIFF),-1 * MAX_MOTOR_DIFF)
-            print(delta)
+            delta = max(min(PID_FB.getDelta(pitch) * sensitivity, MAX_MOTOR_DIFF), -1 * MAX_MOTOR_DIFF)
+
             ESC_Speeds[0] -= delta
             ESC_Speeds[1] -= delta
             ESC_Speeds[2] += delta
