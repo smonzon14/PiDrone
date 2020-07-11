@@ -76,10 +76,10 @@ def get_all():
   return Ax,Ay,Az,Gx,Gy,Gz
 
 def get_pitch():
-  return round(180 * math.atan2(Ax, math.sqrt(Ay**2 + Az**2))/math.pi, 2)
+  return round(180 * math.atan2(get_acc_x(), math.sqrt(get_acc_y()**2 + get_acc_z()**2))/math.pi, 2)
 
 def get_roll():
-  return -1 * round(180 * math.atan2(Ay, math.sqrt(Ax**2 + Az**2))/math.pi, 2)
+  return -1 * round(180 * math.atan2(get_acc_y(), math.sqrt(get_acc_x()**2 + get_acc_z()**2))/math.pi, 2)
 bus = smbus.SMBus(1) 	# or bus = smbus.SMBus(0) for older version boards
 Device_Address = 0x68   # MPU6050 device address
 
