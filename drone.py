@@ -110,7 +110,7 @@ running = True
 
 hover_throttle = 0.5
 
-PID_LR = PID(0.01,0.1,0.1)
+PID_LR = PID(0.01,0.1,0.01)
 PID_FB = PID(0.01,0.1,0.1)
 
 try:
@@ -145,8 +145,8 @@ try:
         acc = [accel_gyro_i2c.get_acc_x(),
                accel_gyro_i2c.get_acc_y(),
                accel_gyro_i2c.get_acc_z()]
-        roll = -1* round(180 * math.atan2(acc[0], math.sqrt(acc[1]**2 + acc[2]**2))/math.pi, 2)
-        pitch = -1 * round(180 * math.atan2(acc[1], math.sqrt(acc[0]**2 + acc[2]**2))/math.pi, 2)
+        pitch = round(180 * math.atan2(acc[0], math.sqrt(acc[1]**2 + acc[2]**2))/math.pi, 2)
+        roll = -1 * round(180 * math.atan2(acc[1], math.sqrt(acc[0]**2 + acc[2]**2))/math.pi, 2)
 
         if(kill):
             while(throttle > 0):
