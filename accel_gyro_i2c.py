@@ -4,7 +4,7 @@
 '''
 import smbus			#import SMBus module of I2C
 from time import sleep          #import
-
+import math
 #some MPU6050 Registers and their Address
 PWR_MGMT_1   = 0x6B
 SMPLRT_DIV   = 0x19
@@ -75,6 +75,11 @@ def get_all():
   Gz = get_gyro_z()
   return Ax,Ay,Az,Gx,Gy,Gz
 
+def get_pitch():
+  return round(180 * math.atan2(Ax, math.sqrt(Ay**2 + Az**2))/math.pi, 2)
+
+def get_roll():
+  return -1 * round(180 * math.atan2(Ay, math.sqrt(Ax**2 + Az**2))/math.pi, 2)
 bus = smbus.SMBus(1) 	# or bus = smbus.SMBus(0) for older version boards
 Device_Address = 0x68   # MPU6050 device address
 
@@ -86,13 +91,7 @@ if __name__ == "__main__":
   print (" Reading Data of Gyroscope and Accelerometer")
   while True:
 
-    Ax = get_acc_x()
-    Ay = get_acc_y()
-    Az = get_acc_z()
-
-    Gx = get_gyro_x()
-    Gy = get_gyro_y()
-    Gz = get_gyro_z()
-
-    print ("Gx=%.2f" %Gx, u'\u00b0'+ "/s", "\tGy=%.2f" %Gy, u'\u00b0'+ "/s", "\tGz=%.2f" %Gz, u'\u00b0'+ "/s", "\tAx=%.2f g" %Ax, "\tAy=%.2f g" %Ay, "\tAz=%.2f g" %Az)
-    sleep(0.2)
+    pitch = get_pitch()
+    roll = get_roll()
+    print("PITCH: " + str(pitch) + ", ROLL: " + str(roll))
+    sleep(0.1)

@@ -43,7 +43,7 @@ if __name__ == "__main__":
     pid = PID(float(sys.argv[1]), float(sys.argv[2]), float(sys.argv[3]))
   pidLR.setTarget(0)
   while(1):
-    gyro = accel_gyro_i2c.get_acc_y()
+    gyro = accel_gyro_i2c.get_pitch()
     delta = pidLR.getDelta(round(gyro,2))
     text = ": "+ '\033[94m' + '▉' * int(abs(delta) * 10)
     print("gyro: " + str(round(gyro,2)) +", delta: " + str(round(delta,2)) + text)
