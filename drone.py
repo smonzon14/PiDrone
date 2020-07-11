@@ -62,7 +62,7 @@ armed = False
 calibrated = False
 throttle = 0.0
 sensitivity_throttle = 0.08
-sensitivity = 0.1
+sensitivity = 0.05
 deadzone = 0.09
 stalling = False
 stall_speed = 0.5
@@ -146,7 +146,7 @@ try:
                accel_gyro_i2c.get_acc_y(),
                accel_gyro_i2c.get_acc_z()]
         roll = -1* round(180 * math.atan2(acc[0], math.sqrt(acc[1]**2 + acc[2]**2))/math.pi, 2)
-        pitch = -1* round(180 * math.atan2(acc[1], math.sqrt(acc[0]**2 + acc[2]**2))/math.pi, 2)
+        pitch = round(180 * math.atan2(acc[1], math.sqrt(acc[0]**2 + acc[2]**2))/math.pi, 2)
 
         if(kill):
             while(throttle > 0):
