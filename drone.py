@@ -94,6 +94,8 @@ def Arm(): #This is the arming procedure of an ESC
     for ESC in ESC_Array:
         ESC.start()
     time.sleep(2)
+    for ESC in ESC_Array:
+        ESC.set_speed(0)
     print("Armed and ready!")
 
 def Kill():
