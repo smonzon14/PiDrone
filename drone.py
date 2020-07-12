@@ -62,7 +62,7 @@ armed = False
 calibrated = False
 throttle = 0.0
 sensitivity_throttle = 0.08
-sensitivity = 0.05
+sensitivity = 0.005
 deadzone = 0.09
 stalling = False
 stall_speed = 0.5
@@ -110,8 +110,8 @@ running = True
 
 hover_throttle = 0.5
 
-PID_LR = PID(0.5,0.01,0.01)
-PID_FB = PID(0.5,0.01,0.01)
+PID_LR = PID(2.0,0.005,0.01)
+PID_FB = PID(2.0,0.005,0.01)
 
 try:
     while running:
