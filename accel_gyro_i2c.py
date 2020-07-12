@@ -32,15 +32,8 @@ gyro_z = 0
 gyro_offsets = [0, 0, 0]
 acc_offsets = [0,0,0]
 
-pitch_gyro = 0
-roll_gyro = 0
-
 pitch = 0
 roll = 0
-
-set_gyro = False
-
-lastUpdate = time.time()
 
 
 
@@ -89,39 +82,43 @@ def calibrate_gyro():
   gyro_offsets[2] /= 2000
 
 def update():
-  global pitch_gyro, roll_gyro, set_gyro, lastUpdate, pitch, roll
-
-  gyro_x = read_raw_data(GYRO_XOUT_H) - gyro_offsets[0]
-  gyro_y = read_raw_data(GYRO_YOUT_H) - gyro_offsets[1]
-  gyro_z = read_raw_data(GYRO_ZOUT_H) - gyro_offsets[2]
-
-  acc_x = read_raw_data(ACCEL_XOUT_H) - acc_offsets[0]
-  acc_y = read_raw_data(ACCEL_YOUT_H) - acc_offsets[1]
-  acc_z = read_raw_data(ACCEL_ZOUT_H) - acc_offsets[2]
-
-  pitch_gyro += gyro_y * 0.0000611
-  roll_gyro += gyro_x * 0.0000611
-  pitch_gyro += roll_gyro * math.sin(gyro_z * 0.000001066)
-  roll_gyro -= pitch_gyro * math.sin(gyro_z * 0.000001066)
-
-  acc_total_vector = math.sqrt(acc_x**2 + acc_y**2 + acc_z**2)
-  pitch_acc = math.asin(acc_x/acc_total_vector) * -57.296
-  roll_acc = math.asin(acc_y/acc_total_vector) * 57.296
-
-
-  if(set_gyro):
-    pitch_gyro = pitch_gyro * 0.9996 + pitch_acc * 0.0004
-    roll_gyro = roll_gyro * 0.9996 + roll_acc * 0.0004
-  else:
-    pitch_gyro = pitch_acc
-    roll_gyro = roll_acc
-    set_gyro = True
-
-  pitch = pitch * 0.9 + pitch_gyro * 0.1
-  roll = roll * 0.9 + roll_gyro * 0.1
-
-  while(time.time()-lastUpdate < 0.004): pass
+  global pitch, roll
+  pitch_gyro = 0
+  roll_gyro = 0
   lastUpdate = time.time()
+  set_gyro = True
+  while 1:
+    gyro_x = read_raw_data(GYRO_XOUT_H) - gyro_offsets[0]
+    gyro_y = read_raw_data(GYRO_YOUT_H) - gyro_offsets[1]
+    gyro_z = read_raw_data(GYRO_ZOUT_H) - gyro_offsets[2]
+
+    acc_x = read_raw_data(ACCEL_XOUT_H) - acc_offsets[0]
+    acc_y = read_raw_data(ACCEL_YOUT_H) - acc_offsets[1]
+    acc_z = read_raw_data(ACCEL_ZOUT_H) - acc_offsets[2]
+
+    pitch_gyro += gyro_y * 0.0000611
+    roll_gyro += gyro_x * 0.0000611
+    pitch_gyro += roll_gyro * math.sin(gyro_z * 0.000001066)
+    roll_gyro -= pitch_gyro * math.sin(gyro_z * 0.000001066)
+
+    acc_total_vector = math.sqrt(acc_x**2 + acc_y**2 + acc_z**2)
+    pitch_acc = math.asin(acc_x/acc_total_vector) * -57.296
+    roll_acc = math.asin(acc_y/acc_total_vector) * 57.296
+
+
+    if(set_gyro):
+      pitch_gyro = pitch_gyro * 0.9996 + pitch_acc * 0.0004
+      roll_gyro = roll_gyro * 0.9996 + roll_acc * 0.0004
+    else:
+      pitch_gyro = pitch_acc
+      roll_gyro = roll_acc
+      set_gyro = True
+
+    pitch = pitch * 0.9 + pitch_gyro * 0.1
+    roll = roll * 0.9 + roll_gyro * 0.1
+
+    while(time.time()-lastUpdate < 0.004): pass
+    lastUpdate = time.time()
 
 
 bus = smbus.SMBus(1) 	# or bus = smbus.SMBus(0) for older version boards
