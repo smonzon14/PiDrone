@@ -93,9 +93,8 @@ def Arm(): #This is the arming procedure of an ESC
     print("ARMING")
     for ESC in ESC_Array:
         ESC.start()
-    time.sleep(2)
-    for ESC in ESC_Array:
         ESC.set_speed(0)
+    time.sleep(2)
     print("Armed and ready!")
 
 def Kill():
@@ -112,8 +111,8 @@ running = True
 
 hover_throttle = 0.5
 
-PID_LR = PID(20.0,0.005,0.01)
-PID_FB = PID(20.0,0.005,0.01)
+PID_LR = PID(40.0,0.005,0.01)
+PID_FB = PID(40.0,0.005,0.01)
 
 try:
     while running:
