@@ -1,15 +1,16 @@
-
+import os
+os.system("sudo pigpiod")
 import socket
 import struct
 import pigpio
-import os
+
 import time
 import compass_i2c
 import gps_serial
 from PIDController import PID
 import accel_gyro_i2c
 import math
-
+time.sleep(1)
 class ESC():
 
     def __init__(self, pin):
