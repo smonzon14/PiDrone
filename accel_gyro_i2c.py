@@ -148,7 +148,7 @@ def get_pitch():
   return pitch
 
 def get_roll():
-  return -1 * roll
+  return roll
 
 
 
