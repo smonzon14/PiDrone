@@ -108,8 +108,8 @@ def update():
 
 
     if(set_gyro):
-      pitch_gyro = pitch_gyro * 0.996 + pitch_acc * 0.004
-      roll_gyro = roll_gyro * 0.996 + roll_acc * 0.004
+      pitch_gyro = pitch_gyro * 0.96 + pitch_acc * 0.04
+      roll_gyro = roll_gyro * 0.96 + roll_acc * 0.04
     else:
       pitch_gyro = pitch_acc
       roll_gyro = roll_acc
