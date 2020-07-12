@@ -155,6 +155,8 @@ def get_roll():
 
 if __name__ == "__main__":
   print (" Reading Data of Gyroscope and Accelerometer")
+  calibrate_gyro()
+  print(gyro_offsets)
   while True:
 
     pitch = get_pitch()
