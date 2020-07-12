@@ -115,8 +115,8 @@ def update():
       roll_gyro = roll_acc
       set_gyro = True
 
-    pitch = pitch * 0.6 + pitch_gyro * 0.4
-    roll = roll * 0.6 + roll_gyro * 0.4
+    pitch = pitch * 0.9 + pitch_gyro * 0.1
+    roll = roll * 0.9 + roll_gyro * 0.1
 
     while(time.time()-lastUpdate < 0.004): pass
     lastUpdate = time.time()
@@ -156,8 +156,7 @@ def get_roll():
 
 if __name__ == "__main__":
   print (" Reading Data of Gyroscope and Accelerometer")
-  calibrate_gyro()
-  print(gyro_offsets)
+
   while True:
 
     pitch = get_pitch()
