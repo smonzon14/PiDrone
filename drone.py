@@ -68,7 +68,7 @@ stalling = False
 stall_speed = 0.5
 #GPS = gps_serial.GPS()
 #COMPASS = compass_i2c.Compass()
-MAX_MOTOR_DIFF = 0.1
+MAX_MOTOR_DIFF = 0.15
 EPOCH = 0
 
 def minMaxRange(val):
@@ -110,8 +110,8 @@ running = True
 
 hover_throttle = 0.5
 
-PID_LR = PID(3.0,0.005,0.01)
-PID_FB = PID(3.0,0.005,0.01)
+PID_LR = PID(5.0,0.005,0.01)
+PID_FB = PID(5.0,0.005,0.01)
 
 try:
     while running:
