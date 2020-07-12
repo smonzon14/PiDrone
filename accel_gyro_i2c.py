@@ -29,7 +29,7 @@ gyro_x = 0
 gyro_y = 0
 gyro_z = 0
 
-gyro_offsets = [0, 0, 0]
+gyro_offsets = [-0.3275076335877863, -0.0008721923828125, 0.21298473282442903]
 acc_offsets = [0,0,0]
 
 pitch = 0
@@ -108,8 +108,8 @@ def update():
 
 
     if(set_gyro):
-      pitch_gyro = pitch_gyro * 0.9 + pitch_acc * 0.1
-      roll_gyro = roll_gyro * 0.9 + roll_acc * 0.1
+      pitch_gyro = pitch_gyro * 0.96 + pitch_acc * 0.04
+      roll_gyro = roll_gyro * 0.96 + roll_acc * 0.04
     else:
       pitch_gyro = pitch_acc
       roll_gyro = roll_acc
