@@ -115,8 +115,8 @@ def update():
       roll_gyro = roll_acc
       set_gyro = True
 
-    pitch = pitch * 0.9 + pitch_gyro * 0.1
-    roll = roll * 0.9 + roll_gyro * 0.1
+    pitch = pitch * 0.6 + pitch_gyro * 0.4
+    roll = roll * 0.6 + roll_gyro * 0.4
 
     while(time.time()-lastUpdate < 0.004): pass
     lastUpdate = time.time()
