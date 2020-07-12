@@ -112,8 +112,8 @@ running = True
 
 hover_throttle = 0.5
 
-PID_LR = PID(4,1,2)
-PID_FB = PID(4,1,2)
+PID_LR = PID(4,0.2,2)
+PID_FB = PID(4,0.2,2)
 
 try:
     while running:
