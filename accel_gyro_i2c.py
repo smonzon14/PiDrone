@@ -2,9 +2,12 @@
         Read Gyro and Accelerometer by Interfacing Raspberry Pi with MPU6050 using Python
 	http://www.electronicwings.com
 '''
+import time
+
 import smbus			#import SMBus module of I2C
 from time import sleep          #import
 import math
+from threading import Thread
 #some MPU6050 Registers and their Address
 PWR_MGMT_1   = 0x6B
 SMPLRT_DIV   = 0x19
@@ -17,6 +20,28 @@ ACCEL_ZOUT_H = 0x3F
 GYRO_XOUT_H  = 0x43
 GYRO_YOUT_H  = 0x45
 GYRO_ZOUT_H  = 0x47
+
+acc_x = 0
+acc_y = 0
+acc_z = 0
+
+gyro_x = 0
+gyro_y = 0
+gyro_z = 0
+
+gyro_offsets = [0, 0, 0]
+acc_offsets = [0,0,0]
+
+pitch_gyro = 0
+roll_gyro = 0
+
+pitch = 0
+roll = 0
+
+set_gyro = False
+
+lastUpdate = time.time()
+
 
 
 def MPU_Init():
@@ -48,42 +73,86 @@ def read_raw_data(addr):
     value = value - 65536
   return value
 
-OFFSETS = [0.3, -0.11, -0.22, 0, 0, 0.1]
 
 
-def get_acc_x():
-  return read_raw_data(ACCEL_XOUT_H)/16384.0 + OFFSETS[3]
-def get_acc_y():
-  return read_raw_data(ACCEL_YOUT_H)/16384.0 + OFFSETS[4]
-def get_acc_z():
-  return read_raw_data(ACCEL_ZOUT_H)/16384.0 + OFFSETS[5]
+def calibrate_gyro():
 
-def get_gyro_x():
-  return read_raw_data(GYRO_XOUT_H)/131.0 + OFFSETS[0]
-def get_gyro_y():
-  return read_raw_data(GYRO_YOUT_H)/131.0 + OFFSETS[1]
-def get_gyro_z():
-  return read_raw_data(GYRO_ZOUT_H)/131.0 + OFFSETS[2]
+  for cal_int in range(2000):
+    if(cal_int % 125 == 0):
+      print(".")
+    gyro_offsets[0] += get_gyro_x()
+    gyro_offsets[1] += get_acc_y()
+    gyro_offsets[2] += get_gyro_z()
+    sleep(0.000003)
+  gyro_offsets[0] /= 2000
+  gyro_offsets[1] /= 2000
+  gyro_offsets[2] /= 2000
 
-def get_all():
-  Ax = get_acc_x()
-  Ay = get_acc_y()
-  Az = get_acc_z()
+def update():
+  global pitch_gyro, roll_gyro, set_gyro, lastUpdate, pitch, roll
 
-  Gx = get_gyro_x()
-  Gy = get_gyro_y()
-  Gz = get_gyro_z()
-  return Ax,Ay,Az,Gx,Gy,Gz
+  gyro_x = read_raw_data(GYRO_XOUT_H) - gyro_offsets[0]
+  gyro_y = read_raw_data(GYRO_YOUT_H) - gyro_offsets[1]
+  gyro_z = read_raw_data(GYRO_ZOUT_H) - gyro_offsets[2]
 
-def get_pitch():
-  return round(180 * math.atan2(get_acc_x(), math.sqrt(get_acc_y()**2 + get_acc_z()**2))/math.pi, 2)
+  acc_x = read_raw_data(ACCEL_XOUT_H) - acc_offsets[0]
+  acc_y = read_raw_data(ACCEL_YOUT_H) - acc_offsets[1]
+  acc_z = read_raw_data(ACCEL_ZOUT_H) - acc_offsets[2]
 
-def get_roll():
-  return -1 * round(180 * math.atan2(get_acc_y(), math.sqrt(get_acc_x()**2 + get_acc_z()**2))/math.pi, 2)
+  pitch_gyro += gyro_y * 0.0000611
+  roll_gyro += gyro_x * 0.0000611
+  pitch_gyro += roll_gyro * math.sin(gyro_z * 0.000001066)
+  roll_gyro -= pitch_gyro * math.sin(gyro_z * 0.000001066)
+
+  acc_total_vector = math.sqrt(acc_x**2 + acc_y**2 + acc_z**2)
+  pitch_acc = math.asin(acc_x/acc_total_vector) * -57.296
+  roll_acc = math.asin(acc_y/acc_total_vector) * 57.296
+
+
+  if(set_gyro):
+    pitch_gyro = pitch_gyro * 0.9996 + pitch_acc * 0.0004
+    roll_gyro = roll_gyro * 0.9996 + roll_acc * 0.0004
+  else:
+    pitch_gyro = pitch_acc
+    roll_gyro = roll_acc
+    set_gyro = True
+
+  pitch = pitch * 0.9 + pitch_gyro * 0.1
+  roll = roll * 0.9 + roll_gyro * 0.1
+
+  while(time.time()-lastUpdate < 0.004): pass
+  lastUpdate = time.time()
+
+
 bus = smbus.SMBus(1) 	# or bus = smbus.SMBus(0) for older version boards
 Device_Address = 0x68   # MPU6050 device address
 
 MPU_Init()
+updateThread = Thread(target=update)
+updateThread.start()
+
+def get_acc_x():
+  return read_raw_data(ACCEL_XOUT_H)/16384.0
+def get_acc_y():
+  return read_raw_data(ACCEL_YOUT_H)/16384.0
+def get_acc_z():
+  return read_raw_data(ACCEL_ZOUT_H)/16384.0
+
+def get_gyro_x():
+  return read_raw_data(GYRO_XOUT_H)/131.0
+def get_gyro_y():
+  return read_raw_data(GYRO_YOUT_H)/131.0
+def get_gyro_z():
+  return read_raw_data(GYRO_ZOUT_H)/131.0
+
+
+def get_pitch():
+  return pitch
+
+def get_roll():
+  return roll
+
+
 
 
 
