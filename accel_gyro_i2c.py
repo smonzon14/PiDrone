@@ -86,7 +86,7 @@ def update():
   pitch_gyro = 0
   roll_gyro = 0
   lastUpdate = time.time()
-  set_gyro = True
+  set_gyro = False
   while 1:
     gyro_x = read_raw_data(GYRO_XOUT_H) - gyro_offsets[0]
     gyro_y = read_raw_data(GYRO_YOUT_H) - gyro_offsets[1]
@@ -104,6 +104,7 @@ def update():
     acc_total_vector = math.sqrt(acc_x**2 + acc_y**2 + acc_z**2)
     pitch_acc = math.asin(acc_x/acc_total_vector) * -57.296
     roll_acc = math.asin(acc_y/acc_total_vector) * 57.296
+
 
 
     if(set_gyro):
