@@ -175,14 +175,16 @@ try:
 
             PID_LR.setTarget(translate_lr/3 if abs(translate_lr) > deadzone else 0)
             delta = max(min(PID_LR.getDelta(roll) * sensitivity, MAX_MOTOR_DIFF), -1 * MAX_MOTOR_DIFF)
-
+            if(EPOCH % 10 == 0):
+                print(delta)
             ESC_Speeds[0] += delta
             ESC_Speeds[1] -= delta
             ESC_Speeds[2] -= delta
             ESC_Speeds[3] += delta
             PID_FB.setTarget(translate_fb/3 if abs(translate_fb) > deadzone else 0)
             delta = max(min(PID_FB.getDelta(pitch) * sensitivity, MAX_MOTOR_DIFF), -1 * MAX_MOTOR_DIFF)
-
+            if(EPOCH % 10 == 0):
+                print(delta)
             ESC_Speeds[0] -= delta
             ESC_Speeds[1] -= delta
             ESC_Speeds[2] += delta
@@ -199,7 +201,7 @@ try:
 
         if(EPOCH % 10 == 0):
             #position = GPS.getPosition()
-            os.system("clear")
+
 
             #print("Position: Lat=" + str(position[0]) + " Lon:"+ str(position[1]))
             #print("Heading: " + str(COMPASS.getHeading()))
