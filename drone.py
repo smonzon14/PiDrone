@@ -43,7 +43,7 @@ sock.bind(('',UDP_PORT))
 """
 
     (cw)               (ccw)
-      12       ^      13
+      13       ^      12
          \\    |x   //
            \\_____// 
             |  ^  | _y_>
@@ -55,7 +55,7 @@ sock.bind(('',UDP_PORT))
  
 """
 
-ESC_Pins = [12, 13, 16, 19]
+ESC_Pins = [13, 12, 16, 19]
 ESC_Array = [ESC(pin) for pin in ESC_Pins]
 ESC_Speeds = [0.0, 0.0, 0.0, 0.0]
 armed = False
