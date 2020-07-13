@@ -147,7 +147,17 @@ try:
 
         pitch = accel_gyro_i2c.get_pitch()
         roll = accel_gyro_i2c.get_roll()
-
+        direction = -1
+        magnitude = 0
+        if(abs(roll) > 1 and abs(pitch) > 1):
+            y = math.sin(roll)
+            x = math.sin(pitch)
+            direction = (180 * math.atan(y/x) / math.pi) if (abs(x) > 0) else (90 if roll > 0 else -90)
+            direction += 180 if (pitch < 0 ) else 0
+            direction += 360 if(direction < 0) else 0
+            magnitude = math.sqrt(x**2 + y**2)
+        print("DIRECTION: " + str(direction))
+        print("MAGNITUDE: " + str(magnitude))
         if(kill):
             while(throttle > 0):
                 throttle -= 0.2 if(throttle <= 0.5) else 0.1
