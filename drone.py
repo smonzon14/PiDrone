@@ -149,7 +149,7 @@ try:
         roll = accel_gyro_i2c.get_roll()
         direction = -1
         magnitude = 0
-        if(abs(roll) > 1 and abs(pitch) > 1):
+        if(abs(roll) > 1 or abs(pitch) > 1):
             y = math.sin(roll / 57.2958)
             x = math.sin(pitch / 57.2958)
             direction = (180 * math.atan(y/x) / math.pi) if (abs(x) > 0) else (90 if roll > 0 else -90)
