@@ -150,8 +150,8 @@ try:
         direction = -1
         magnitude = 0
         if(abs(roll) > 1 and abs(pitch) > 1):
-            y = math.sin(roll)
-            x = math.sin(pitch)
+            y = math.sin(roll / 57.2958)
+            x = math.sin(pitch / 57.2958)
             direction = (180 * math.atan(y/x) / math.pi) if (abs(x) > 0) else (90 if roll > 0 else -90)
             direction += 180 if (pitch < 0 ) else 0
             direction += 360 if(direction < 0) else 0
