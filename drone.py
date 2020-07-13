@@ -156,8 +156,7 @@ try:
             direction += 180 if (pitch < 0 ) else 0
             direction += 360 if(direction < 0) else 0
             magnitude = math.sqrt(x**2 + y**2)
-        print("DIRECTION: " + str(direction))
-        print("MAGNITUDE: " + str(magnitude))
+
         if(kill):
             while(throttle > 0):
                 throttle -= 0.2 if(throttle <= 0.5) else 0.1
@@ -211,7 +210,7 @@ try:
             for s in range(4):
                 ESC_Array[s].set_speed(ESC_Speeds[s])
 
-        if(EPOCH % 10 == 0):
+        if(EPOCH % 20 == 0):
             #position = GPS.getPosition()
 
 
@@ -219,6 +218,8 @@ try:
             #print("Heading: " + str(COMPASS.getHeading()))
             print("pitch: " + str(pitch))
             print("roll: " + str(roll))
+            print("DIRECTION: " + str(direction))
+            print("MAGNITUDE: " + str(magnitude))
             print("Speeds:")
             print(ESC_Speeds)
 
