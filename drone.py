@@ -145,8 +145,8 @@ try:
         translate_fb =  s[5]
         yaw =           s[6]
 
-        pitch = accel_gyro_i2c.get_pitch()
-        roll = accel_gyro_i2c.get_roll()
+        pitch = accel_gyro_i2c.get_pitch() + 2.35
+        roll = accel_gyro_i2c.get_roll() + 2.35
         direction = -1
         magnitude = 0
         if(abs(roll) > 1 or abs(pitch) > 1):
