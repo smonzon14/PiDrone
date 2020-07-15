@@ -12,9 +12,9 @@ import accel_gyro_i2c
 import math
 time.sleep(1)
 
-PID_ROLL = PID(0.5, 0.01, 0.1)
-PID_PITCH = PID(0.5, 0.01, 0.1)
-PID_YAW = PID(0.1,0.001,0.01)
+PID_ROLL = PID(0.25, 0.01, 0.1)
+PID_PITCH = PID(0.25, 0.01, 0.1)
+PID_YAW = PID(0.5,0.01,0.1)
 
 class ESC():
 
@@ -70,7 +70,7 @@ sensitivity = 0.005
 deadzone = 0.09
 #GPS = gps_serial.GPS()
 #COMPASS = compass_i2c.Compass()
-MAX_MOTOR_DIFF = 0.1
+MAX_MOTOR_DIFF = 0.05
 EPOCH = 0
 
 def minMaxRange(val):
