@@ -12,8 +12,9 @@ import accel_gyro_i2c
 import math
 time.sleep(1)
 
-PID_LR = PID(15,0.2,2)
-PID_FB = PID(15,0.2,2)
+PID_ROLL = PID(0.5, 0.01, 0.1)
+PID_PITCH = PID(0.5, 0.01, 0.1)
+PID_YAW = PID(0.1,0.001,0.01)
 
 class ESC():
 
@@ -163,6 +164,8 @@ try:
 
         pitch = accel_gyro_i2c.get_pitch() + 2.35
         roll = accel_gyro_i2c.get_roll() + 2.35
+        yaw = accel_gyro_i2c.get_yaw()
+
         direction = -1
         magnitude = 0
         if(abs(roll) > 1 or abs(pitch) > 1):
@@ -200,28 +203,24 @@ try:
                     throttle += translate_ud * sensitivity_throttle
                 throttle = minMaxRange(throttle)
 
-            PID_LR.setTarget(translate_lr/3 if abs(translate_lr) > deadzone else 0)
-            delta = max(min(PID_LR.getDelta(roll) * sensitivity, MAX_MOTOR_DIFF), -1 * MAX_MOTOR_DIFF)
-            if(EPOCH % 10 == 0):
-                print(delta)
+            PID_ROLL.setTarget(translate_lr / 3 if abs(translate_lr) > deadzone else 0)
+            delta = max(min(PID_ROLL.getDelta(roll) * sensitivity, MAX_MOTOR_DIFF), -1 * MAX_MOTOR_DIFF)
             ESC_Speeds[0] += delta
             ESC_Speeds[1] -= delta
             ESC_Speeds[2] -= delta
             ESC_Speeds[3] += delta
-            PID_FB.setTarget(translate_fb/3 if abs(translate_fb) > deadzone else 0)
-            delta = max(min(PID_FB.getDelta(pitch) * sensitivity, MAX_MOTOR_DIFF), -1 * MAX_MOTOR_DIFF)
-            if(EPOCH % 10 == 0):
-                print(delta)
+            PID_PITCH.setTarget(translate_fb / 3 if abs(translate_fb) > deadzone else 0)
+            delta = max(min(PID_PITCH.getDelta(pitch) * sensitivity, MAX_MOTOR_DIFF), -1 * MAX_MOTOR_DIFF)
             ESC_Speeds[0] -= delta
             ESC_Speeds[1] -= delta
             ESC_Speeds[2] += delta
             ESC_Speeds[3] += delta
-            if abs(yaw) > deadzone:
-                delta = yaw * sensitivity /10
-                ESC_Speeds[0] -= delta
-                ESC_Speeds[1] += delta
-                ESC_Speeds[2] -= delta
-                ESC_Speeds[3] += delta
+            PID_YAW.setTarget(0)
+            delta = max(min(PID_YAW.getDelta(yaw) * sensitivity, MAX_MOTOR_DIFF), -1 * MAX_MOTOR_DIFF)
+            ESC_Speeds[0] -= delta
+            ESC_Speeds[1] += delta
+            ESC_Speeds[2] -= delta
+            ESC_Speeds[3] += delta
             ESC_Speeds = [minMaxRange(throttle + ESC_Speeds[i]) for i in range(4)]
             for s in range(4):
                 ESC_Array[s].set_speed(ESC_Speeds[s])
