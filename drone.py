@@ -216,7 +216,7 @@ try:
             ESC_Speeds[2] += delta
             ESC_Speeds[3] += delta
             PID_YAW.setTarget(0)
-            delta = max(min(PID_YAW.getDelta(yaw) * sensitivity, MAX_MOTOR_DIFF), -1 * MAX_MOTOR_DIFF)
+            delta = 0 #max(min(PID_YAW.getDelta(yaw) * sensitivity, MAX_MOTOR_DIFF), -1 * MAX_MOTOR_DIFF)
             ESC_Speeds[0] += delta
             ESC_Speeds[1] -= delta
             ESC_Speeds[2] += delta
