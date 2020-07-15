@@ -164,7 +164,8 @@ try:
 
         pitch = accel_gyro_i2c.get_pitch() + 2.35
         roll = accel_gyro_i2c.get_roll() + 2.35
-        yaw = accel_gyro_i2c.get_yaw()
+        delta_yaw = accel_gyro_i2c.get_yaw() - yaw
+        yaw = delta_yaw + yaw
 
         direction = -1
         magnitude = 0
@@ -216,7 +217,7 @@ try:
             ESC_Speeds[2] += delta
             ESC_Speeds[3] += delta
             PID_YAW.setTarget(0)
-            delta = 0 #max(min(PID_YAW.getDelta(yaw) * sensitivity, MAX_MOTOR_DIFF), -1 * MAX_MOTOR_DIFF)
+            delta = max(min(PID_YAW.getDelta(delta_yaw) * sensitivity, MAX_MOTOR_DIFF), -1 * MAX_MOTOR_DIFF)
             ESC_Speeds[0] += delta
             ESC_Speeds[1] -= delta
             ESC_Speeds[2] += delta
