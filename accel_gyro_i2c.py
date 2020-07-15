@@ -96,12 +96,12 @@ def update():
     acc_y = read_raw_data(ACCEL_YOUT_H) - acc_offsets[1]
     acc_z = read_raw_data(ACCEL_ZOUT_H) - acc_offsets[2]
 
-    pitch_gyro += gyro_y * 0.0000611
-    roll_gyro += gyro_x * 0.0000611
+    pitch_gyro += gyro_y * 0.0007332
+    roll_gyro += gyro_x * 0.0007332
     pitch_gyro += roll_gyro * math.sin(gyro_z * 0.000001066)
     roll_gyro -= pitch_gyro * math.sin(gyro_z * 0.000001066)
 
-    yaw += gyro_z * 0.0000611
+    yaw += gyro_z * 0.0007332
 
 
     acc_total_vector = math.sqrt(acc_x**2 + acc_y**2 + acc_z**2)
@@ -121,8 +121,8 @@ def update():
     pitch = pitch * 0.9 + pitch_gyro * 0.1
     roll = roll * 0.9 + roll_gyro * 0.1
 
-    if(time.time()-lastUpdate >= 0.004): print("WARNING: not updating fast enough " + str(time.time()-lastUpdate))
-    while(time.time()-lastUpdate < 0.004): pass
+    if(time.time()-lastUpdate >= 0.012): print("WARNING: not updating fast enough " + str(time.time()-lastUpdate))
+    while(time.time()-lastUpdate < 0.012): pass
     lastUpdate = time.time()
 
 
