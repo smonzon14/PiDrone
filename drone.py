@@ -3,7 +3,7 @@ os.system("sudo pigpiod")
 import socket
 import struct
 import pigpio
-
+from threading import Thread
 import time
 import compass_i2c
 import gps_serial
@@ -59,14 +59,10 @@ sock.bind(('',UDP_PORT))
 ESC_Pins = [13, 12, 16, 19]
 ESC_Array = [ESC(pin) for pin in ESC_Pins]
 ESC_Speeds = [0.0, 0.0, 0.0, 0.0]
-armed = False
-calibrated = False
-throttle = 0.0
+
 sensitivity_throttle = 0.08
 sensitivity = 0.005
 deadzone = 0.09
-stalling = False
-stall_speed = 0.5
 #GPS = gps_serial.GPS()
 #COMPASS = compass_i2c.Compass()
 MAX_MOTOR_DIFF = 0.15
@@ -108,23 +104,29 @@ def recieveControllerData(timeout=0.5):
     s = list(struct.unpack('3?4d',data))
     return s
 
-running = True
+armed = False
+calibrated = False
+throttle = 0.0
+kill = False
+arm = False
+calibrate = False
+translate_lr = 0.0
+translate_ud = 0.0
+translate_fb = 0.0
+yaw = 0.0
 
-hover_throttle = 0.5
 
-PID_LR = PID(15,0.2,2)
-PID_FB = PID(15,0.2,2)
-
-try:
+def ControlThread():
+    global running, kill, arm, calibrate, translate_lr, translate_ud, translate_fb, yaw, armed, throttle
     while running:
-        s = []
-        while(s == []):
+        controllerData = []
+        while(controllerData == []):
             try:
-                s = recieveControllerData()
+                controllerData = recieveControllerData()
             except socket.timeout:
                 print("WARNING: No Control Data.")
                 if(armed):
-                    print("Throttling down: "+throttle)
+                    print("Throttling down: "+str(throttle))
                     if(throttle > 0):
                         throttle -= 0.2 if(throttle <= 0.5) else 0.1
                         for esc in ESC_Array:
@@ -135,15 +137,26 @@ try:
                         throttle = 0
             except KeyboardInterrupt:
                 running = False
+        kill =          controllerData[0]
+        arm =           controllerData[1]
+        calibrate =     controllerData[2]
+        translate_lr =  controllerData[3]
+        translate_ud =  controllerData[4]
+        translate_fb =  controllerData[5]
+        yaw =           controllerData[6]
 
+running = True
 
-        kill =          s[0]
-        arm =           s[1]
-        calibrate =     s[2]
-        translate_lr =  s[3]
-        translate_ud =  s[4]
-        translate_fb =  s[5]
-        yaw =           s[6]
+hover_throttle = 0.5
+
+PID_LR = PID(15,0.2,2)
+PID_FB = PID(15,0.2,2)
+
+controlThread = Thread(target=ControlThread)
+controlThread.start()
+
+try:
+    while running:
 
         pitch = accel_gyro_i2c.get_pitch() + 2.35
         roll = accel_gyro_i2c.get_roll() + 2.35
