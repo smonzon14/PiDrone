@@ -108,8 +108,6 @@ def update():
     pitch_acc = math.asin(acc_x/acc_total_vector) * -57.296
     roll_acc = math.asin(acc_y/acc_total_vector) * 57.296
 
-
-
     if(set_gyro):
       pitch_gyro = pitch_gyro * 0.99 + pitch_acc * 0.01
       roll_gyro = roll_gyro * 0.99 + roll_acc * 0.01
@@ -121,7 +119,6 @@ def update():
     pitch = pitch * 0.9 + pitch_gyro * 0.1
     roll = roll * 0.9 + roll_gyro * 0.1
 
-    if(time.time()-lastUpdate >= 0.024): print("WARNING: not updating fast enough " + str(time.time()-lastUpdate))
     while(time.time()-lastUpdate < 0.024): pass
     lastUpdate = time.time()
 

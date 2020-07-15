@@ -28,7 +28,7 @@ class PID():
       self.Cd = (error - self.Cp) / dt
       self.Cp = error
       self.Ci += error * dt
-
+      self.Ci = max(-8, min(8, self.Ci))
     self.lastDelta = t
     u = self.P * self.Cp + self.I * self.Ci + self.D * self.Cd
 

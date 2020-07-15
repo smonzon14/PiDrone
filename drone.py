@@ -12,9 +12,9 @@ import accel_gyro_i2c
 import math
 time.sleep(1)
 
-PID_ROLL = PID(0.25, 0.01, 0.1)
-PID_PITCH = PID(0.25, 0.01, 0.1)
-PID_YAW = PID(0.5,0.01,0.1)
+PID_ROLL = PID(0.5, 0.1, 0.01)
+PID_PITCH = PID(0.5, 0.1, 0.01)
+PID_YAW = PID(0.5,0.1,0.01)
 
 class ESC():
 
@@ -66,7 +66,7 @@ ESC_Array = [ESC(pin) for pin in ESC_Pins]
 ESC_Speeds = [0.0, 0.0, 0.0, 0.0]
 
 sensitivity_throttle = 0.08
-sensitivity = 0.005
+sensitivity = 0.1
 deadzone = 0.09
 #GPS = gps_serial.GPS()
 #COMPASS = compass_i2c.Compass()
@@ -217,7 +217,7 @@ try:
             ESC_Speeds[2] += delta
             ESC_Speeds[3] += delta
             PID_YAW.setTarget(0)
-            delta = max(min(PID_YAW.getDelta(delta_yaw) * sensitivity, MAX_MOTOR_DIFF), -1 * MAX_MOTOR_DIFF)
+            delta = 0 #max(min(PID_YAW.getDelta(delta_yaw) * sensitivity, MAX_MOTOR_DIFF), -1 * MAX_MOTOR_DIFF)
             ESC_Speeds[0] += delta
             ESC_Speeds[1] -= delta
             ESC_Speeds[2] += delta
