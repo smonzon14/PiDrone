@@ -11,6 +11,10 @@ from PIDController import PID
 import accel_gyro_i2c
 import math
 time.sleep(1)
+
+PID_LR = PID(15,0.2,2)
+PID_FB = PID(15,0.2,2)
+
 class ESC():
 
     def __init__(self, pin):
@@ -65,7 +69,7 @@ sensitivity = 0.005
 deadzone = 0.09
 #GPS = gps_serial.GPS()
 #COMPASS = compass_i2c.Compass()
-MAX_MOTOR_DIFF = 0.15
+MAX_MOTOR_DIFF = 0.1
 EPOCH = 0
 
 def minMaxRange(val):
@@ -149,8 +153,7 @@ running = True
 
 hover_throttle = 0.5
 
-PID_LR = PID(15,0.2,2)
-PID_FB = PID(15,0.2,2)
+
 
 controlThread = Thread(target=ControlThread)
 controlThread.start()
