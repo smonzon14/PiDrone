@@ -233,6 +233,7 @@ try:
             #print("Heading: " + str(COMPASS.getHeading()))
             print("pitch: " + str(pitch))
             print("roll: " + str(roll))
+            print("yaw: " + str(yaw))
             print("DIRECTION: " + str(direction))
             print("MAGNITUDE: " + str(magnitude))
             print("Speeds:")

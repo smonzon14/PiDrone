@@ -101,7 +101,7 @@ def update():
     pitch_gyro += roll_gyro * math.sin(gyro_z * 0.000001066)
     roll_gyro -= pitch_gyro * math.sin(gyro_z * 0.000001066)
 
-    yaw += gyro_z * 0.0000611
+    yaw = gyro_z * 0.0000611
 
 
     acc_total_vector = math.sqrt(acc_x**2 + acc_y**2 + acc_z**2)
